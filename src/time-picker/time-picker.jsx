@@ -120,6 +120,10 @@ const TimePicker = React.createClass({
     this.refs.input.setValue(this.formatTime(t));
   },
 
+  clearTime(t) {
+    this.refs.input.clearValue();
+  },
+
   _handleDialogAccept(t) {
     this.setTime(t);
     if (this.props.onChange) this.props.onChange(null, t);
