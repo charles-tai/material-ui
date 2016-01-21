@@ -1,5 +1,5 @@
 {
-  "name": "material-ui",
+  "name": "material-ui-loki",
   "author": "Call-em-all Engineering Team",
   "version": "0.12.5",
   "description": "Material Design UI components built with React",
@@ -10,7 +10,7 @@
     "test-base": "./node_modules/.bin/karma start",
     "prebuild": "rm -rf lib",
     "eslint": "gulp eslint",
-    "build": "npm run eslint && babel --stage 1 ./src --out-dir ./lib",
+    "build": "babel --stage 1 ./src --out-dir ./lib",
     "prepublish": "npm run build"
   },
   "keywords": [
