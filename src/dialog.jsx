@@ -351,9 +351,12 @@ let Dialog = React.createClass({
       let dialogContent = this.refs.dialogContent.getDOMNode();
       let minPaddingTop = 16;
 
-      //Reset the height in case the window was resized.
-      dialogWindow.style.height = '';
-      dialogContent.style.height = '';
+      // Reset the height in case the window was resized.
+      // Do not reset if enableFullScreen is true
+      if (!this.props.enableFullScreen) {
+          dialogWindow.style.height = '';
+          dialogContent.style.height = '';
+      }
 
       let dialogWindowHeight = dialogWindow.offsetHeight;
       let paddingTop = ((clientHeight - dialogWindowHeight) / 2) - 64;
@@ -374,6 +377,12 @@ let Dialog = React.createClass({
         if (this.props.actions.length) maxDialogContentHeight -= dialogContent.nextSibling.offsetHeight;
 
         dialogContent.style.maxHeight = maxDialogContentHeight + 'px';
+      }
+      // Remove paddingTop from container, set dialog height to clientHeight
+      if (this.props.enableFullScreen) {
+        container.style.paddingTop = '0px';
+        dialogContent.style.height = clientHeight;
+        dialogContent.style.maxHeight = clientHeight;
       }
     }
   },
