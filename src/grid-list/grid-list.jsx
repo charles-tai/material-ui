@@ -1,69 +1,82 @@
-const React = require('react');
-const StylePropable = require('../mixins/style-propable');
-const DefaultRawTheme = require('../styles/raw-themes/light-raw-theme');
-const ThemeManager = require('../styles/theme-manager');
+import React from 'react';
+import getMuiTheme from '../styles/getMuiTheme';
+
+function getStyles(props) {
+  return {
+    root: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      margin: -props.padding / 2,
+    },
+    item: {
+      boxSizing: 'border-box',
+      padding: props.padding / 2,
+    },
+  };
+}
 
 const GridList = React.createClass({
 
-  mixins: [StylePropable],
+  propTypes: {
+    /**
+     * Number of px for one cell height.
+     */
+    cellHeight: React.PropTypes.number,
+
+    /**
+     * Grid Tiles that will be in Grid List.
+     */
+    children: React.PropTypes.node,
+
+    /**
+     * Number of columns.
+     */
+    cols: React.PropTypes.number,
+
+    /**
+     * Number of px for the padding/spacing between items.
+     */
+    padding: React.PropTypes.number,
+
+    /**
+     * Override the inline-styles of the root element.
+     */
+    style: React.PropTypes.object,
+  },
 
   contextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  propTypes: {
-    cols: React.PropTypes.number,
-    padding: React.PropTypes.number,
-    cellHeight: React.PropTypes.number,
-  },
-
-  //for passing default theme context to children
   childContextTypes: {
     muiTheme: React.PropTypes.object,
-  },
-
-  getChildContext () {
-    return {
-      muiTheme: this.state.muiTheme,
-    };
   },
 
   getDefaultProps() {
     return {
       cols: 2,
       padding: 4,
-      cellHeight: '180px',
+      cellHeight: 180,
     };
   },
 
-  getInitialState () {
+  getInitialState() {
     return {
-      muiTheme: this.context.muiTheme ? this.context.muiTheme : ThemeManager.getMuiTheme(DefaultRawTheme),
+      muiTheme: this.context.muiTheme || getMuiTheme(),
     };
   },
 
-  //to update theme inside state whenever a new theme is passed down
-  //from the parent / owner using context
-  componentWillReceiveProps (nextProps, nextContext) {
-    let newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-    this.setState({muiTheme: newMuiTheme});
-  },
-
-  getStyles()
-  {
+  getChildContext() {
     return {
-      root: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        margin: `-${this.props.padding/2}px`,
-      },
-      item: {
-        boxSizing: 'border-box',
-        padding: `${this.props.padding/2}px`,
-      },
+      muiTheme: this.state.muiTheme,
     };
   },
 
+  componentWillReceiveProps(nextProps, nextContext) {
+    this.setState({
+      muiTheme: nextContext.muiTheme || this.state.muiTheme,
+    });
+  },
 
   render() {
     const {
@@ -73,27 +86,36 @@ const GridList = React.createClass({
       children,
       style,
       ...other,
-      } = this.props;
+    } = this.props;
 
-    const styles = this.getStyles();
+    const {
+      prepareStyles,
+    } = this.state.muiTheme;
 
-    const mergedRootStyles = this.mergeStyles(styles.root, style);
+    const styles = getStyles(this.props, this.state);
+
+    const mergedRootStyles = Object.assign(styles.root, style);
 
     const wrappedChildren = React.Children.map(children, (currentChild) => {
+      if (React.isValidElement(currentChild) && currentChild.type.displayName === 'Subheader') {
+        return currentChild;
+      }
       const childCols = currentChild.props.cols || 1;
       const childRows = currentChild.props.rows || 1;
-      const itemStyle = this.mergeStyles(styles.item, {
-        width: (100 / cols * childCols) + '%',
+      const itemStyle = Object.assign({}, styles.item, {
+        width: `${(100 / cols * childCols)}%`,
         height: cellHeight * childRows + padding,
       });
 
-      return <div style={this.prepareStyles(itemStyle)}>{currentChild}</div>;
+      return <div style={prepareStyles(itemStyle)}>{currentChild}</div>;
     });
 
     return (
-      <div style={this.prepareStyles(mergedRootStyles)} {...other}>{wrappedChildren}</div>
+      <div style={prepareStyles(mergedRootStyles)} {...other}>
+        {wrappedChildren}
+      </div>
     );
   },
 });
 
-module.exports = GridList;
+export default GridList;

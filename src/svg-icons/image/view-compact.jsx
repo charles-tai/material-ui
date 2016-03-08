@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const ImageViewCompact = React.createClass({
+let ImageViewCompact = (props) => (
+  <SvgIcon {...props}>
+    <path d="M3 19h6v-7H3v7zm7 0h12v-7H10v7zM3 5v6h19V5H3z"/>
+  </SvgIcon>
+);
+ImageViewCompact = pure(ImageViewCompact)
+ImageViewCompact.displayName = 'ImageViewCompact';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M3 19h6v-7H3v7zm7 0h12v-7H10v7zM3 5v6h19V5H3z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = ImageViewCompact;
+export default ImageViewCompact;

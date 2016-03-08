@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const DeviceSignalCellularConnectedNoInternet2Bar = React.createClass({
+let DeviceSignalCellularConnectedNoInternet2Bar = (props) => (
+  <SvgIcon {...props}>
+    <path fillOpacity=".3" d="M22 8V2L2 22h16V8z"/><path d="M14 22V10L2 22h12zm6-12v8h2v-8h-2zm0 12h2v-2h-2v2z"/>
+  </SvgIcon>
+);
+DeviceSignalCellularConnectedNoInternet2Bar = pure(DeviceSignalCellularConnectedNoInternet2Bar)
+DeviceSignalCellularConnectedNoInternet2Bar.displayName = 'DeviceSignalCellularConnectedNoInternet2Bar';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path fill-opacity=".3" d="M22 8V2L2 22h16V8z"/><path d="M14 22V10L2 22h12zm6-12v8h2v-8h-2zm0 12h2v-2h-2v2z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = DeviceSignalCellularConnectedNoInternet2Bar;
+export default DeviceSignalCellularConnectedNoInternet2Bar;

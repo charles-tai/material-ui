@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const AvPause = React.createClass({
+let AvPause = (props) => (
+  <SvgIcon {...props}>
+    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+  </SvgIcon>
+);
+AvPause = pure(AvPause)
+AvPause.displayName = 'AvPause';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = AvPause;
+export default AvPause;

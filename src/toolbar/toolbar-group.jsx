@@ -1,147 +1,189 @@
-const React = require('react');
-const Colors = require('../styles/colors');
-const StylePropable = require('../mixins/style-propable');
-const DefaultRawTheme = require('../styles/raw-themes/light-raw-theme');
-const ThemeManager = require('../styles/theme-manager');
+import React from 'react';
+import getMuiTheme from '../styles/getMuiTheme';
+
+function getStyles(props, state) {
+  const {
+    firstChild,
+    lastChild,
+  } = props;
+
+  const {
+    baseTheme,
+    button,
+    toolbar,
+  } = state.muiTheme;
+
+  const marginHorizontal = baseTheme.spacing.desktopGutter;
+  const marginVertical = (toolbar.height - button.height) / 2;
+
+  const styles = {
+    root: {
+      position: 'relative',
+      marginLeft: firstChild ? -marginHorizontal : undefined,
+      marginRight: lastChild ? -marginHorizontal : undefined,
+      display: 'flex',
+      justifyContent: 'space-between',
+    },
+    dropDownMenu: {
+      root: {
+        color: toolbar.color, // removes hover color change, we want to keep it
+        marginRight: baseTheme.spacing.desktopGutter,
+        flex: 1,
+        whiteSpace: 'nowrap',
+      },
+      controlBg: {
+        backgroundColor: toolbar.menuHoverColor,
+        borderRadius: 0,
+      },
+      underline: {
+        display: 'none',
+      },
+    },
+    button: {
+      margin: `${marginVertical}px ${marginHorizontal}px`,
+      position: 'relative',
+    },
+    icon: {
+      root: {
+        cursor: 'pointer',
+        color: toolbar.iconColor,
+        lineHeight: `${toolbar.height}px`,
+        paddingLeft: baseTheme.spacing.desktopGutter,
+      },
+      hover: {
+        color: toolbar.hoverColor,
+      },
+    },
+    span: {
+      color: toolbar.iconColor,
+      lineHeight: `${toolbar.height}px`,
+    },
+  };
+
+  return styles;
+}
 
 const ToolbarGroup = React.createClass({
+  propTypes: {
+    /**
+     * Can be any node or number of nodes.
+     */
+    children: React.PropTypes.node,
 
-  mixins: [StylePropable],
+    /**
+     * The css class name of the root element.
+     */
+    className: React.PropTypes.string,
+
+    /**
+     * Set this to true for if the `ToolbarGroup` is the first child of `Toolbar`
+     * to prevent setting the left gap.
+     */
+    firstChild: React.PropTypes.bool,
+
+    /**
+     * Determines the side the `ToolbarGroup` will snap to. Either 'left' or 'right'.
+     */
+    float: React.PropTypes.oneOf(['left', 'right']),
+
+    /**
+     * Set this to true for if the `ToolbarGroup` is the last child of `Toolbar`
+     * to prevent setting the right gap.
+     */
+    lastChild: React.PropTypes.bool,
+
+    /**
+     * Override the inline-styles of the root element.
+     */
+    style: React.PropTypes.object,
+  },
 
   contextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  propTypes: {
-    className: React.PropTypes.string,
-    float: React.PropTypes.string,
-  },
-
-  //for passing default theme context to children
   childContextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  getChildContext () {
+  getDefaultProps() {
+    return {
+      firstChild: false,
+      lastChild: false,
+    };
+  },
+
+  getInitialState() {
+    return {
+      muiTheme: this.context.muiTheme || getMuiTheme(),
+    };
+  },
+
+  getChildContext() {
     return {
       muiTheme: this.state.muiTheme,
     };
   },
 
-  getDefaultProps() {
-    return {
-      float: 'left',
-    };
+  componentWillReceiveProps(nextProps, nextContext) {
+    this.setState({
+      muiTheme: nextContext.muiTheme || this.state.muiTheme,
+    });
   },
 
-  getInitialState () {
-    return {
-      muiTheme: this.context.muiTheme ? this.context.muiTheme : ThemeManager.getMuiTheme(DefaultRawTheme),
-    };
-  }, 
-
-  //to update theme inside state whenever a new theme is passed down
-  //from the parent / owner using context
-  componentWillReceiveProps (nextProps, nextContext) {
-    let newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-    this.setState({muiTheme: newMuiTheme});
+  _handleMouseEnterFontIcon: (style) => (event) => {
+    event.target.style.zIndex = style.hover.zIndex;
+    event.target.style.color = style.hover.color;
   },
 
-  getTheme() {
-    return this.state.muiTheme.toolbar;
-  },
-
-  getSpacing() {
-    return this.state.muiTheme.rawTheme.spacing.desktopGutter;
-  },
-
-  getStyles() {
-    let marginHorizontal = this.getSpacing();
-    let marginVertical = (this.getTheme().height - this.state.muiTheme.button.height) / 2;
-    let styles = {
-      root: {
-        position: 'relative',
-        float: this.props.float,
-      },
-      dropDownMenu: {
-        root: {
-          float: 'left',
-          color: Colors.lightBlack,// removes hover color change, we want to keep it
-          display: 'inline-block',
-          marginRight: this.getSpacing(),
-        },
-        controlBg: {
-          backgroundColor: this.getTheme().menuHoverColor,
-          borderRadius: 0,
-        },
-        underline: {
-          display: 'none',
-        },
-      },
-      button: {
-        float: 'left',
-        margin: marginVertical + 'px ' + marginHorizontal + 'px',
-        position: 'relative',
-      },
-      icon: {
-        root: {
-          float: 'left',
-          cursor: 'pointer',
-          color: this.getTheme().iconColor,
-          lineHeight: this.getTheme().height + 'px',
-          paddingLeft: this.getSpacing(),
-        },
-        hover: {
-          color: Colors.darkBlack,
-        },
-      },
-      span: {
-        float: 'left',
-        color: this.getTheme().iconColor,
-        lineHeight: this.getTheme().height + 'px',
-      },
-    };
-
-    return styles;
+  _handleMouseLeaveFontIcon: (style) => (event) => {
+    event.target.style.zIndex = 'auto';
+    event.target.style.color = style.root.color;
   },
 
   render() {
-    let styles = this.getStyles();
+    const {
+      children,
+      className,
+      style,
+      ...other,
+    } = this.props;
 
-    if (this.props.firstChild) styles.marginLeft = -24;
-    if (this.props.lastChild) styles.marginRight = -24;
+    const {
+      prepareStyles,
+    } = this.state.muiTheme;
 
-    let newChildren = React.Children.map(this.props.children, (currentChild) => {
+    const styles = getStyles(this.props, this.state);
+
+    const newChildren = React.Children.map(children, (currentChild) => {
       if (!currentChild) {
         return null;
+      }
+      if (!currentChild.type) {
+        return currentChild;
       }
       switch (currentChild.type.displayName) {
         case 'DropDownMenu' :
           return React.cloneElement(currentChild, {
-            style: this.mergeStyles(styles.dropDownMenu.root, currentChild.props.style),
+            style: Object.assign({}, styles.dropDownMenu.root, currentChild.props.style),
             styleControlBg: styles.dropDownMenu.controlBg,
             styleUnderline: styles.dropDownMenu.underline,
           });
-        case 'DropDownIcon' :
+        case 'RaisedButton' :
+        case 'FlatButton' :
           return React.cloneElement(currentChild, {
-            style: this.mergeStyles({float: 'left'}, currentChild.props.style),
-            iconStyle: styles.icon.root,
-            onMouseEnter: this._handleMouseEnterDropDownMenu,
-            onMouseLeave: this._handleMouseLeaveDropDownMenu,
-          });
-        case 'RaisedButton' : case 'FlatButton' :
-          return React.cloneElement(currentChild, {
-            style: this.mergeStyles(styles.button, currentChild.props.style),
+            style: Object.assign({}, styles.button, currentChild.props.style),
           });
         case 'FontIcon' :
           return React.cloneElement(currentChild, {
-            style: this.mergeStyles(styles.icon.root, currentChild.props.style),
-            onMouseEnter: this._handleMouseEnterFontIcon,
-            onMouseLeave: this._handleMouseLeaveFontIcon,
+            style: Object.assign({}, styles.icon.root, currentChild.props.style),
+            onMouseEnter: this._handleMouseEnterFontIcon(styles.icon),
+            onMouseLeave: this._handleMouseLeaveFontIcon(styles.icon),
           });
-        case 'ToolbarSeparator' : case 'ToolbarTitle' :
+        case 'ToolbarSeparator' :
+        case 'ToolbarTitle' :
           return React.cloneElement(currentChild, {
-            style: this.mergeStyles(styles.span, currentChild.props.style),
+            style: Object.assign({}, styles.span, currentChild.props.style),
           });
         default:
           return currentChild;
@@ -149,31 +191,11 @@ const ToolbarGroup = React.createClass({
     }, this);
 
     return (
-      <div className={this.props.className} style={this.prepareStyles(styles.root, this.props.style)}>
+      <div {...other} className={className} style={prepareStyles(Object.assign({}, styles.root, style))}>
         {newChildren}
       </div>
     );
   },
-
-  _handleMouseEnterDropDownMenu(e) {
-    e.target.style.zIndex = this.getStyles().icon.hover.zIndex;
-    e.target.style.color = this.getStyles().icon.hover.color;
-  },
-
-  _handleMouseLeaveDropDownMenu(e) {
-    e.target.style.zIndex = 'auto';
-    e.target.style.color = this.getStyles().icon.root.color;
-  },
-
-  _handleMouseEnterFontIcon(e) {
-    e.target.style.zIndex = this.getStyles().icon.hover.zIndex;
-    e.target.style.color = this.getStyles().icon.hover.color;
-  },
-
-  _handleMouseLeaveFontIcon(e) {
-    e.target.style.zIndex = 'auto';
-    e.target.style.color = this.getStyles().icon.root.color;
-  },
 });
 
-module.exports = ToolbarGroup;
+export default ToolbarGroup;

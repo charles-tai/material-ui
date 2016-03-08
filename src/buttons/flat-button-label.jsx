@@ -1,53 +1,56 @@
-const React = require('react/addons');
-const ContextPure = require('../mixins/context-pure');
-const StylePropable = require('../mixins/style-propable');
-const Styles = require('../utils/styles');
-const DefaultRawTheme = require('../styles/raw-themes/light-raw-theme');
-const ThemeManager = require('../styles/theme-manager');
+import React from 'react';
+import getMuiTheme from '../styles/getMuiTheme';
+
+function getStyles(props, state) {
+  const {
+    baseTheme,
+  } = state.muiTheme;
+
+  return {
+    root: {
+      position: 'relative',
+      paddingLeft: baseTheme.spacing.desktopGutterLess,
+      paddingRight: baseTheme.spacing.desktopGutterLess,
+      verticalAlign: 'middle',
+    },
+  };
+}
 
 const FlatButtonLabel = React.createClass({
 
-  mixins: [ContextPure, StylePropable],
+  propTypes: {
+    label: React.PropTypes.node,
+
+    /**
+     * Override the inline-styles of the root element.
+     */
+    style: React.PropTypes.object,
+  },
 
   contextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  propTypes: {
-    label: React.PropTypes.node,
-    style: React.PropTypes.object,
-  },
-
-  //for passing default theme context to children
   childContextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  getChildContext () {
+  getInitialState() {
+    return {
+      muiTheme: this.context.muiTheme || getMuiTheme(),
+    };
+  },
+
+  getChildContext() {
     return {
       muiTheme: this.state.muiTheme,
     };
   },
 
-  getInitialState () {
-    return {
-      muiTheme: this.context.muiTheme ? this.context.muiTheme : ThemeManager.getMuiTheme(DefaultRawTheme),
-    };
-  },
-
-  //to update theme inside state whenever a new theme is passed down
-  //from the parent / owner using context
-  componentWillReceiveProps (nextProps, nextContext) {
-    let newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-    this.setState({muiTheme: newMuiTheme});
-  },
-
-  statics: {
-    getRelevantContextKeys(muiTheme) {
-      return {
-        spacingDesktopGutterLess: muiTheme.rawTheme.spacing.desktopGutterLess,
-      };
-    },
+  componentWillReceiveProps(nextProps, nextContext) {
+    this.setState({
+      muiTheme: nextContext.muiTheme || this.state.muiTheme,
+    });
   },
 
   render: function() {
@@ -56,18 +59,16 @@ const FlatButtonLabel = React.createClass({
       style,
     } = this.props;
 
-    const contextKeys = this.constructor.getRelevantContextKeys(this.state.muiTheme);
+    const {
+      prepareStyles,
+    } = this.state.muiTheme;
 
-    const mergedRootStyles = this.mergeStyles({
-      position: 'relative',
-      padding: '0 ' + contextKeys.spacingDesktopGutterLess + 'px',
-    }, style);
+    const styles = getStyles(this.props, this.state);
 
     return (
-      <span style={this.prepareStyles(mergedRootStyles)}>{label}</span>
+      <span style={prepareStyles(Object.assign(styles.root, style))}>{label}</span>
     );
   },
-
 });
 
-module.exports = FlatButtonLabel;
+export default FlatButtonLabel;

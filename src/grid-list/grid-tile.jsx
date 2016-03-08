@@ -1,40 +1,139 @@
-const React = require('react');
-const StylePropable = require('../mixins/style-propable');
-const DefaultRawTheme = require('../styles/raw-themes/light-raw-theme');
-const ThemeManager = require('../styles/theme-manager');
+import React from 'react';
+import getMuiTheme from '../styles/getMuiTheme';
+
+function getStyles(props, state) {
+  const {
+    baseTheme,
+    gridTile,
+  } = state.muiTheme;
+
+  const actionPos = props.actionIcon && props.actionPosition;
+
+  const styles = {
+    root: {
+      position: 'relative',
+      display: 'block',
+      height: '100%',
+      overflow: 'hidden',
+    },
+    titleBar: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      [props.titlePosition]: 0,
+      height: props.subtitle ? 68 : 48,
+      background: props.titleBackground,
+      display: 'flex',
+      alignItems: 'center',
+    },
+    titleWrap: {
+      flexGrow: 1,
+      marginLeft: actionPos !== 'left' ? baseTheme.spacing.desktopGutterLess : 0,
+      marginRight: actionPos === 'left' ? baseTheme.spacing.desktopGutterLess : 0,
+      color: gridTile.textColor,
+      overflow: 'hidden',
+    },
+    title: {
+      fontSize: '16px',
+      textOverflow: 'ellipsis',
+      overflow: 'hidden',
+      whiteSpace: 'nowrap',
+    },
+    subtitle: {
+      fontSize: '12px',
+      textOverflow: 'ellipsis',
+      overflow: 'hidden',
+      whiteSpace: 'nowrap',
+    },
+    actionIcon: {
+      order: actionPos === 'left' ? -1 : 1,
+    },
+    childImg: {
+      height: '100%',
+      transform: 'translateX(-50%)',
+      position: 'relative',
+      left: '50%',
+    },
+  };
+  return styles;
+}
 
 const GridTile = React.createClass({
 
-  mixins: [StylePropable],
+  propTypes: {
+    /**
+     * An IconButton element to be used as secondary action target
+     * (primary action target is the tile itself).
+     */
+    actionIcon: React.PropTypes.element,
+
+    /**
+     * Position of secondary action IconButton.
+     */
+    actionPosition: React.PropTypes.oneOf(['left', 'right']),
+
+    /**
+     * Theoretically you can pass any node as children, but the main use case is to pass an img,
+     * in whichcase GridTile takes care of making the image "cover" available space
+     * (similar to background-size: cover or to object-fit:cover).
+     */
+    children: React.PropTypes.node,
+
+    /**
+     * Width of the tile in number of grid cells.
+     */
+    cols: React.PropTypes.number,
+
+    /**
+     * Either a string used as tag name for the tile root element, or a ReactComponent.
+     * This is useful when you have, for example, a custom implementation of
+     * a navigation link (that knowsabout your routes) and you want to use it as primary tile action.
+     * In case you pass a ReactComponent, please make sure that it passes all props,
+     * accepts styles overrides and render it's children.
+     */
+    rootClass: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.object,
+    ]),
+
+    /**
+     * Height of the tile in number of grid cells.
+     */
+    rows: React.PropTypes.number,
+
+    /**
+     * Override the inline-styles of the root element.
+     */
+    style: React.PropTypes.object,
+
+    /**
+     * String or element serving as subtitle (support text).
+     */
+    subtitle: React.PropTypes.node,
+
+    /**
+     * Title to be displayed on tile.
+     */
+    title: React.PropTypes.node,
+
+    /**
+     * Style used for title bar background.
+     * Useful for setting custom gradients for example
+     */
+    titleBackground: React.PropTypes.string,
+
+    /**
+     * Position of the title bar (container of title, subtitle and action icon).
+     */
+    titlePosition: React.PropTypes.oneOf(['top', 'bottom']),
+  },
 
   contextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  propTypes: {
-    title: React.PropTypes.string,
-    subtitle: React.PropTypes.node,
-    titlePosition: React.PropTypes.oneOf(['top', 'bottom']),
-    titleBackground: React.PropTypes.string,
-    actionIcon: React.PropTypes.element,
-    actionPosition: React.PropTypes.oneOf(['left', 'right']),
-    cols: React.PropTypes.number,
-    rows: React.PropTypes.number,
-    rootClass: React.PropTypes.oneOfType([
-      React.PropTypes.string,
-      React.PropTypes.object,
-    ]),
-  },
-
-  //for passing default theme context to children
   childContextTypes: {
     muiTheme: React.PropTypes.object,
-  },
-
-  getChildContext () {
-    return {
-      muiTheme: this.state.muiTheme,
-    };
   },
 
   getDefaultProps() {
@@ -48,88 +147,37 @@ const GridTile = React.createClass({
     };
   },
 
-  getInitialState () {
+  getInitialState() {
     return {
-      muiTheme: this.context.muiTheme ? this.context.muiTheme : ThemeManager.getMuiTheme(DefaultRawTheme),
+      muiTheme: this.context.muiTheme || getMuiTheme(),
     };
   },
 
-  //to update theme inside state whenever a new theme is passed down
-  //from the parent / owner using context
-  componentWillReceiveProps (nextProps, nextContext) {
-    let newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-    this.setState({muiTheme: newMuiTheme});
-  },
-
-  getStyles()
-  {
-    const spacing = this.state.muiTheme.rawTheme.spacing;
-    const themeVariables = this.state.muiTheme.gridTile;
-    const actionPos = this.props.actionIcon ? this.props.actionPosition : null;
-    const gutterLess = spacing.desktopGutterLess;
-
-    let styles = {
-      root: {
-        position: 'relative',
-        display: 'block',
-        height: '100%',
-        overflow: 'hidden',
-      },
-      titleBar: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        [this.props.titlePosition]: 0,
-        height: this.props.subtitle ? 68 : 48,
-        background: this.props.titleBackground,
-        display: 'flex',
-        alignItems: 'center',
-      },
-      titleWrap: {
-        flexGrow: 1,
-        marginLeft: actionPos === 'right' ? gutterLess : 0,
-        marginRight: actionPos === 'left' ? gutterLess : 0,
-        color: themeVariables.textColor,
-        overflow: 'hidden',
-      },
-      title: {
-        fontSize: '16px',
-        textOverflow: 'ellipsis',
-        overflow: 'hidden',
-        whiteSpace: 'nowrap',
-      },
-      subtitle: {
-        fontSize: '12px',
-        textOverflow: 'ellipsis',
-        overflow: 'hidden',
-        whiteSpace: 'nowrap',
-      },
-      actionIcon: {
-        order: actionPos === 'left' ? -1 : 1,
-      },
-      childImg: {
-        height: '100%',
-        transform: 'translateX(-50%)',
-        position: 'relative',
-        left: '50%',
-      },
+  getChildContext() {
+    return {
+      muiTheme: this.state.muiTheme,
     };
-    return styles;
   },
 
   componentDidMount() {
     this._ensureImageCover();
   },
 
-  componeneDidUpdate() {
+  componentWillReceiveProps(nextProps, nextContext) {
+    this.setState({
+      muiTheme: nextContext.muiTheme || this.state.muiTheme,
+    });
+  },
+
+  componentDidUpdate() {
     this._ensureImageCover();
   },
 
   _ensureImageCover() {
-    let imgEl = React.findDOMNode(this.refs.img);
+    let imgEl = this.refs.img;
 
     if (imgEl) {
-      let fit = () => {
+      const fit = () => {
         if (imgEl.offsetWidth < imgEl.parentNode.offsetWidth) {
           imgEl.style.height = 'auto';
           imgEl.style.left = '0';
@@ -161,25 +209,29 @@ const GridTile = React.createClass({
       children,
       rootClass,
       ...other,
-      } = this.props;
+    } = this.props;
 
-    const styles = this.getStyles();
+    const {
+      prepareStyles,
+    } = this.state.muiTheme;
 
-    const mergedRootStyles = this.prepareStyles(styles.root, style);
+    const styles = getStyles(this.props, this.state);
+
+    const mergedRootStyles = Object.assign(styles.root, style);
 
     let titleBar = null;
 
     if (title) {
       titleBar = (
-        <div style={this.prepareStyles(styles.titleBar)}>
-          <div style={this.prepareStyles(styles.titleWrap)}>
-            <div style={this.prepareStyles(styles.title)}>{title}</div>
+        <div style={prepareStyles(styles.titleBar)}>
+          <div style={prepareStyles(styles.titleWrap)}>
+            <div style={prepareStyles(styles.title)}>{title}</div>
             {
-              subtitle ? (<div style={this.prepareStyles(styles.subtitle)}>{subtitle}</div>) : null
+              subtitle ? (<div style={prepareStyles(styles.subtitle)}>{subtitle}</div>) : null
             }
           </div>
           {
-            actionIcon ? (<div style={this.prepareStyles(styles.actionIcon)}>{actionIcon}</div>) : null
+            actionIcon ? (<div style={prepareStyles(styles.actionIcon)}>{actionIcon}</div>) : null
           }
         </div>
       );
@@ -194,7 +246,7 @@ const GridTile = React.createClass({
         if (child.type === 'img') {
           return React.cloneElement(child, {
             ref: 'img',
-            style: this.prepareStyles(styles.childImg, child.props.style),
+            style: prepareStyles(Object.assign({}, styles.childImg, child.props.style)),
           });
         } else {
           return child;
@@ -204,7 +256,7 @@ const GridTile = React.createClass({
 
     const RootTag = rootClass;
     return (
-      <RootTag style={mergedRootStyles} {...other}>
+      <RootTag style={prepareStyles(mergedRootStyles)} {...other}>
         {newChildren}
         {titleBar}
       </RootTag>
@@ -212,4 +264,4 @@ const GridTile = React.createClass({
   },
 });
 
-module.exports = GridTile;
+export default GridTile;

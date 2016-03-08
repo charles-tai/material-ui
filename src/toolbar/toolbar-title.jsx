@@ -1,68 +1,91 @@
-const React = require('react');
-const StylePropable = require('../mixins/style-propable');
-const DefaultRawTheme = require('../styles/raw-themes/light-raw-theme');
-const ThemeManager = require('../styles/theme-manager');
+import React from 'react';
+import getMuiTheme from '../styles/getMuiTheme';
+
+function getStyles(props, state) {
+  const {
+    baseTheme,
+    toolbar,
+  } = state.muiTheme;
+
+  return {
+    root: {
+      paddingRight: baseTheme.spacing.desktopGutterLess,
+      lineHeight: `${toolbar.height}px`,
+      fontSize: toolbar.titleFontSize,
+      position: 'relative',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+    },
+  };
+}
 
 const ToolbarTitle = React.createClass({
 
-  mixins: [StylePropable],
+  propTypes: {
+    /**
+     * The css class name of the root element.
+     */
+    className: React.PropTypes.string,
+
+    /**
+     * Override the inline-styles of the root element.
+     */
+    style: React.PropTypes.object,
+
+    /**
+     * The text to be displayed.
+     */
+    text: React.PropTypes.string,
+  },
 
   contextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  propTypes: {
-    text: React.PropTypes.string,
-  },
-
-  //for passing default theme context to children
   childContextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  getChildContext () {
+  getInitialState() {
+    return {
+      muiTheme: this.context.muiTheme || getMuiTheme(),
+    };
+  },
+
+  getChildContext() {
     return {
       muiTheme: this.state.muiTheme,
     };
   },
 
-  getInitialState () {
-    return {
-      muiTheme: this.context.muiTheme ? this.context.muiTheme : ThemeManager.getMuiTheme(DefaultRawTheme),
-    };
-  },
-
-  //to update theme inside state whenever a new theme is passed down
-  //from the parent / owner using context
-  componentWillReceiveProps (nextProps, nextContext) {
-    let newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-    this.setState({muiTheme: newMuiTheme});
-  },
-
-  getTheme() {
-    return this.state.muiTheme.toolbar;
+  componentWillReceiveProps(nextProps, nextContext) {
+    this.setState({
+      muiTheme: nextContext.muiTheme || this.state.muiTheme,
+    });
   },
 
   render() {
-    let {
+    const {
+      className,
       style,
       text,
       ...other,
     } = this.props;
 
-    let styles = this.prepareStyles({
-      paddingRight: this.state.muiTheme.rawTheme.spacing.desktopGutterLess,
-      lineHeight: this.getTheme().height + 'px',
-      fontSize: this.getTheme().titleFontSize + 'px',
-      display: 'inline-block',
-      position: 'relative',
-    }, style);
+    const {
+      prepareStyles,
+    } = this.state.muiTheme;
+
+    const styles = getStyles(this.props, this.state);
 
     return (
-      <span style={styles} {...other} >{text}</span>
+      <span {...other} className={className} style={prepareStyles(Object.assign({}, styles.root, style))}>
+        {text}
+      </span>
     );
   },
 
 });
 
-module.exports = ToolbarTitle;
+export default ToolbarTitle;

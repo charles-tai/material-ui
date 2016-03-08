@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const EditorVerticalAlignCenter = React.createClass({
+let EditorVerticalAlignCenter = (props) => (
+  <SvgIcon {...props}>
+    <path d="M8 19h3v4h2v-4h3l-4-4-4 4zm8-14h-3V1h-2v4H8l4 4 4-4zM4 11v2h16v-2H4z"/>
+  </SvgIcon>
+);
+EditorVerticalAlignCenter = pure(EditorVerticalAlignCenter)
+EditorVerticalAlignCenter.displayName = 'EditorVerticalAlignCenter';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M8 19h3v4h2v-4h3l-4-4-4 4zm8-14h-3V1h-2v4H8l4 4 4-4zM4 11v2h16v-2H4z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = EditorVerticalAlignCenter;
+export default EditorVerticalAlignCenter;

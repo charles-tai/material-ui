@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const EditorFormatQuote = React.createClass({
+let EditorFormatQuote = (props) => (
+  <SvgIcon {...props}>
+    <path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/>
+  </SvgIcon>
+);
+EditorFormatQuote = pure(EditorFormatQuote)
+EditorFormatQuote.displayName = 'EditorFormatQuote';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = EditorFormatQuote;
+export default EditorFormatQuote;

@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const ActionChangeHistory = React.createClass({
+let ActionChangeHistory = (props) => (
+  <SvgIcon {...props}>
+    <path d="M12 7.77L18.39 18H5.61L12 7.77M12 4L2 20h20L12 4z"/>
+  </SvgIcon>
+);
+ActionChangeHistory = pure(ActionChangeHistory)
+ActionChangeHistory.displayName = 'ActionChangeHistory';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M12 7.77L18.39 18H5.61L12 7.77M12 4L2 20h20L12 4z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = ActionChangeHistory;
+export default ActionChangeHistory;

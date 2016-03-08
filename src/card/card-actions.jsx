@@ -1,70 +1,79 @@
-const React = require('react');
-const StylePropable = require('../mixins/style-propable');
-const ThemeManager = require('../styles/theme-manager');
-const DefaultRawTheme = require('../styles/raw-themes/light-raw-theme');
+import React from 'react';
+import getMuiTheme from '../styles/getMuiTheme';
 
+function getStyles() {
+  return {
+    root: {
+      padding: 8,
+      position: 'relative',
+    },
+    action: {
+      marginRight: 8,
+    },
+  };
+}
 
 const CardActions = React.createClass({
-  mixins: [StylePropable],
+
+  propTypes: {
+    actAsExpander: React.PropTypes.bool,
+    children: React.PropTypes.node,
+    expandable: React.PropTypes.bool,
+    showExpandableButton: React.PropTypes.bool,
+
+    /**
+     * Override the inline-styles of the root element.
+     */
+    style: React.PropTypes.object,
+  },
 
   contextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  //for passing default theme context to children
   childContextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  getChildContext () {
+  getInitialState() {
+    return {
+      muiTheme: this.context.muiTheme || getMuiTheme(),
+    };
+  },
+
+  getChildContext() {
     return {
       muiTheme: this.state.muiTheme,
     };
   },
 
-  getInitialState() {
-    return { 
-      muiTheme: this.context.muiTheme ? this.context.muiTheme : ThemeManager.getMuiTheme(DefaultRawTheme),
-    };
-  },
-
-  //to update theme inside state whenever a new theme is passed down
-  //from the parent / owner using context
-  componentWillReceiveProps (nextProps, nextContext) {
-    let newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-    this.setState({muiTheme: newMuiTheme});
-  },
-
-  getStyles() {
-    return {
-      root: {
-        padding: 8,
-        position: 'relative',
-      },
-    };
-  },
-
-  propTypes: {
-    expandable: React.PropTypes.bool,
-    actAsExpander: React.PropTypes.bool,
-    showExpandableButton: React.PropTypes.bool,
+  componentWillReceiveProps(nextProps, nextContext) {
+    this.setState({
+      muiTheme: nextContext.muiTheme || this.state.muiTheme,
+    });
   },
 
   render() {
-    let styles = this.getStyles();
+    const {
+      prepareStyles,
+    } = this.state.muiTheme;
 
-    let children = React.Children.map(this.props.children, (child) => {
-      return React.cloneElement(child, {
-        style: {marginRight: 8},
-      });
+    const styles = getStyles(this.props, this.state);
+
+    const children = React.Children.map(this.props.children, (child) => {
+      if (React.isValidElement(child)) {
+        return React.cloneElement(child, {
+          style: Object.assign({}, styles.action, child.props.style),
+        });
+      }
     });
 
     return (
-      <div {...this.props} style={this.prepareStyles(styles.root, this.props.style)}>
+      <div {...this.props} style={prepareStyles(Object.assign(styles.root, this.props.style))}>
         {children}
       </div>
     );
   },
 });
 
-module.exports = CardActions;
+export default CardActions;

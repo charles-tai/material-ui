@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const ActionTrendingFlat = React.createClass({
+let ActionTrendingFlat = (props) => (
+  <SvgIcon {...props}>
+    <path d="M22 12l-4-4v3H3v2h15v3z"/>
+  </SvgIcon>
+);
+ActionTrendingFlat = pure(ActionTrendingFlat)
+ActionTrendingFlat.displayName = 'ActionTrendingFlat';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M22 12l-4-4v3H3v2h15v3z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = ActionTrendingFlat;
+export default ActionTrendingFlat;

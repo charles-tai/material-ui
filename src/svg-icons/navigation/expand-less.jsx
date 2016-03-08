@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const NavigationExpandLess = React.createClass({
+let NavigationExpandLess = (props) => (
+  <SvgIcon {...props}>
+    <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
+  </SvgIcon>
+);
+NavigationExpandLess = pure(NavigationExpandLess)
+NavigationExpandLess.displayName = 'NavigationExpandLess';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = NavigationExpandLess;
+export default NavigationExpandLess;

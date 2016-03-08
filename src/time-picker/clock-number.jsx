@@ -1,45 +1,21 @@
-const React = require('react');
-const StylePropable = require('../mixins/style-propable');
-const DefaultRawTheme = require('../styles/raw-themes/light-raw-theme');
-const ThemeManager = require('../styles/theme-manager');
+import React from 'react';
+import getMuiTheme from '../styles/getMuiTheme';
 
 const ClockNumber = React.createClass({
 
-  mixins: [StylePropable],
+  propTypes: {
+    isSelected: React.PropTypes.bool,
+    onSelected: React.PropTypes.func,
+    type: React.PropTypes.oneOf(['hour', 'minute']),
+    value: React.PropTypes.number,
+  },
 
   contextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  propTypes: {
-    value: React.PropTypes.number,
-    type: React.PropTypes.oneOf(['hour', 'minute']),
-    onSelected: React.PropTypes.func,
-    isSelected: React.PropTypes.bool,
-  },
-
-  //for passing default theme context to children
   childContextTypes: {
     muiTheme: React.PropTypes.object,
-  },
-
-  getChildContext () {
-    return {
-      muiTheme: this.state.muiTheme,
-    };
-  },
-
-  getInitialState () {
-    return {
-      muiTheme: this.context.muiTheme ? this.context.muiTheme : ThemeManager.getMuiTheme(DefaultRawTheme),
-    };
-  },
-
-  //to update theme inside state whenever a new theme is passed down
-  //from the parent / owner using context
-  componentWillReceiveProps (nextProps, nextContext) {
-    let newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-    this.setState({muiTheme: newMuiTheme});
   },
 
   getDefaultProps() {
@@ -50,23 +26,44 @@ const ClockNumber = React.createClass({
     };
   },
 
+  getInitialState() {
+    return {
+      muiTheme: this.context.muiTheme || getMuiTheme(),
+    };
+  },
+
+  getChildContext() {
+    return {
+      muiTheme: this.state.muiTheme,
+    };
+  },
+
+  componentWillReceiveProps(nextProps, nextContext) {
+    this.setState({
+      muiTheme: nextContext.muiTheme || this.state.muiTheme,
+    });
+  },
+
   getTheme() {
     return this.state.muiTheme.timePicker;
   },
 
   render() {
+    const {
+      prepareStyles,
+    } = this.state.muiTheme;
+
     let pos = this.props.value;
     let inner = false;
 
-    if (this.props.type === "hour") {
+    if (this.props.type === 'hour') {
       inner = pos < 1 || pos > 12;
       pos %= 12;
-    }
-    else {
+    } else {
       pos = pos / 5;
     }
 
-    let positions = [
+    const positions = [
       [0, 5],
       [54.5, 16.6],
       [94.4, 59.5],
@@ -81,7 +78,7 @@ const ClockNumber = React.createClass({
       [-54.5, 19.6],
     ];
 
-    let innerPositions = [
+    const innerPositions = [
       [0, 40],
       [36.9, 49.9],
       [64, 77],
@@ -96,21 +93,21 @@ const ClockNumber = React.createClass({
       [-37, 50],
     ];
 
-    let styles = {
+    const styles = {
       root: {
-        display: "inline-block",
-        position: "absolute",
+        display: 'inline-block',
+        position: 'absolute',
         width: 32,
         height: 32,
-        borderRadius: "100%",
+        borderRadius: '100%',
         left: 'calc(50% - 16px)',
         top: 10,
-        textAlign: "center",
+        textAlign: 'center',
         paddingTop: 5,
-        userSelect: "none",  /* Chrome all / Safari all */
-        fontSize: "1.1em",
-        pointerEvents: "none",
-        boxSizing: "border-box",
+        userSelect: 'none',  /* Chrome all / Safari all */
+        fontSize: '1.1em',
+        pointerEvents: 'none',
+        boxSizing: 'border-box',
       },
     };
 
@@ -122,20 +119,20 @@ const ClockNumber = React.createClass({
     let transformPos = positions[pos];
 
     if (inner) {
-      styles.root.width = "28px";
-      styles.root.height = "28px";
+      styles.root.width = 28;
+      styles.root.height = 28;
       styles.root.left = 'calc(50% - 14px)';
       transformPos = innerPositions[pos];
     }
 
-    let [x, y] = transformPos;
+    const [x, y] = transformPos;
 
-    styles.root.transform = "translate(" + x + "px, " + y + "px)";
+    styles.root.transform = `translate(${x}px, ${y}px)`;
 
     return (
-        <span style={this.prepareStyles(styles.root)}>{this.props.value}</span>
+      <span style={prepareStyles(styles.root)}>{this.props.value}</span>
     );
   },
 });
 
-module.exports = ClockNumber;
+export default ClockNumber;

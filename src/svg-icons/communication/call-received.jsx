@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const CommunicationCallReceived = React.createClass({
+let CommunicationCallReceived = (props) => (
+  <SvgIcon {...props}>
+    <path d="M20 5.41L18.59 4 7 15.59V9H5v10h10v-2H8.41z"/>
+  </SvgIcon>
+);
+CommunicationCallReceived = pure(CommunicationCallReceived)
+CommunicationCallReceived.displayName = 'CommunicationCallReceived';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M20 5.41L18.59 4 7 15.59V9H5v10h10v-2H8.41z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = CommunicationCallReceived;
+export default CommunicationCallReceived;

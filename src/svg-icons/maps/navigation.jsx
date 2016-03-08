@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const MapsNavigation = React.createClass({
+let MapsNavigation = (props) => (
+  <SvgIcon {...props}>
+    <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
+  </SvgIcon>
+);
+MapsNavigation = pure(MapsNavigation)
+MapsNavigation.displayName = 'MapsNavigation';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = MapsNavigation;
+export default MapsNavigation;

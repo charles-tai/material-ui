@@ -1,32 +1,103 @@
-const React = require('react');
-const StylePropable = require('../mixins/style-propable');
-const WindowListenable = require('../mixins/window-listenable');
-const TimePickerDialog = require('./time-picker-dialog');
-const TextField = require('../text-field');
+import React from 'react';
+import warning from 'warning';
+import DateTime from '../utils/date-time.js';
+import TimePickerDialog from './time-picker-dialog';
+import TextField from '../text-field';
+import getMuiTheme from '../styles/getMuiTheme';
 
-
-let emptyTime = new Date();
+const emptyTime = new Date();
 emptyTime.setHours(0);
 emptyTime.setMinutes(0);
-
+emptyTime.setSeconds(0);
+emptyTime.setMilliseconds(0);
 
 const TimePicker = React.createClass({
 
-  mixins: [StylePropable, WindowListenable],
-
   propTypes: {
+    /**
+     * If true, automatically accept and close the picker on set minutes.
+     */
+    autoOk: React.PropTypes.bool,
+
+   /**
+    * Override the label of the 'Cancel' button.
+    */
+    cancelLabel: React.PropTypes.string,
+
+    /**
+     * This is the initial time value of the component.
+     */
     defaultTime: React.PropTypes.object,
+
+    /**
+     * Tells the component to display the picker in
+     * ampm (12hr) format or 24hr format.
+     */
     format: React.PropTypes.oneOf(['ampm', '24hr']),
-    pedantic: React.PropTypes.bool,
-    onFocus: React.PropTypes.func,
-    onTouchTap: React.PropTypes.func,
+
+    /**
+     * Override the label of the 'OK' button.
+     */
+    okLabel: React.PropTypes.string,
+
+    /**
+     * Callback function that is fired when the time
+     * value changes. The time value is passed in a Date
+     * Object.Since there is no particular event associated
+     * with the change the first argument will always be null
+     * and the second argument will be the new Date instance.
+     */
     onChange: React.PropTypes.func,
-    onShow: React.PropTypes.func,
+
+    /**
+     * Fired when the timepicker dialog is dismissed.
+     */
     onDismiss: React.PropTypes.func,
+
+    /**
+     * Callback function that is fired when the timepicker field gains focus.
+     */
+    onFocus: React.PropTypes.func,
+
+    /**
+     * Fired when the timepicker dialog is shown.
+     */
+    onShow: React.PropTypes.func,
+
+    /**
+     * Callback for touch tap event.
+     */
+    onTouchTap: React.PropTypes.func,
+
+    /**
+     * It's technically more correct to refer to
+     * "12 noon" and "12 midnight" rather than
+     * "12 a.m." and "12 p.m." and it avoids real
+     * confusion between different locales. By default
+     * (for compatibility reasons) TimePicker uses
+     * (12 a.m./12 p.m.) To use (noon/midnight) set pedantic={true}.
+     */
+    pedantic: React.PropTypes.bool,
+
+    /**
+     * Override the inline-styles of the root element.
+     */
+    style: React.PropTypes.object,
+
+    /**
+     * Override the inline-styles of TimePicker's TextField element.
+     */
+    textFieldStyle: React.PropTypes.object,
+
+    /**
+     * Sets the time for the Time Picker programmatically.
+     */
+    value: React.PropTypes.object,
+
   },
 
-  windowListeners: {
-    'keyup': '_handleWindowKeyUp',
+  contextTypes: {
+    muiTheme: React.PropTypes.object,
   },
 
   getDefaultProps() {
@@ -34,116 +105,146 @@ const TimePicker = React.createClass({
       defaultTime: null,
       format: 'ampm',
       pedantic: false,
+      autoOk: false,
+      style: {},
+      okLabel: 'OK',
+      cancelLabel: 'Cancel',
     };
   },
 
   getInitialState() {
     return {
-      time: this.props.defaultTime || emptyTime,
+      time: this._isControlled() ? this._getControlledTime() : this.props.defaultTime,
       dialogTime: new Date(),
+      muiTheme: this.context.muiTheme || getMuiTheme(),
     };
   },
 
-  formatTime(date) {
-    let hours = date.getHours();
-    let mins = date.getMinutes().toString();
-
-    if (this.props.format === "ampm"){
-      let isAM = hours < 12;
-      hours = hours % 12;
-      let additional = isAM ? " am" : " pm";
-      hours = (hours || 12).toString();
-
-      if (mins.length < 2 ) mins = "0" + mins;
-
-      if (this.props.pedantic) {
-        // Treat midday/midnight specially http://www.nist.gov/pml/div688/times.cfm
-        if (hours === "12" && mins === "00") {
-          return additional === " pm" ? "12 noon" : "12 midnight";
-        }
-      }
-
-      return hours + (mins === "00" ? "" : ":" + mins) + additional;
+  componentWillReceiveProps(nextProps, nextContext) {
+    const newState = this.state;
+    if (nextContext.muiTheme) {
+      newState.muiTheme = nextContext.muiTheme;
     }
+    newState.time = this._getControlledTime(nextProps);
+    this.setState(newState);
+  },
 
-    hours = hours.toString();
 
-    if (hours.length < 2) hours = "0" + hours;
-    if (mins.length < 2) mins = "0" + mins;
+  /**
+   * Deprecated.
+   * returns timepicker value.
+   **/
+  getTime() {
+    warning(false, `getTime() method is deprecated. Use the defaultTime property
+    instead. Or use the TimePicker as a controlled component with the value
+    property.`);
+    return this.state.time;
+  },
 
-    return hours + ":" + mins;
+  /**
+   * Deprecated
+   * sets timepicker value.
+   **/
+  setTime(time) {
+    warning(false, `setTime() method is deprecated. Use the defaultTime property
+    instead. Or use the TimePicker as a controlled component with the value
+    property.`);
+    this.setState({time: time ? time : emptyTime});
+  },
+
+  /**
+   * Alias for `openDialog()` for an api consistent with TextField.
+   */
+  focus() {
+    this.openDialog();
+  },
+
+  openDialog() {
+    this.setState({
+      dialogTime: this.state.time,
+    });
+    this.refs.dialogWindow.show();
+  },
+
+  _handleDialogAccept(t) {
+    this.setState({
+      time: t,
+    });
+    if (this.props.onChange) this.props.onChange(null, t);
+  },
+
+  _handleInputFocus(event) {
+    event.target.blur();
+    if (this.props.onFocus) this.props.onFocus(event);
+  },
+
+  _handleInputTouchTap(event) {
+    event.preventDefault();
+
+    this.openDialog();
+
+    if (this.props.onTouchTap) this.props.onTouchTap(event);
+  },
+
+  _isControlled() {
+    return this.props.value !== null;
+  },
+
+  _getControlledTime(props = this.props) {
+    let result = null;
+    if (DateTime.isDateObject(props.value)) {
+      result = props.value;
+    }
+    return result;
   },
 
   render() {
-    let {
+    const {
+      autoOk,
+      cancelLabel,
       format,
+      okLabel,
       onFocus,
       onTouchTap,
       onShow,
       onDismiss,
+      pedantic,
+      style,
+      textFieldStyle,
       ...other,
     } = this.props;
 
-    let defaultInputValue;
-
-    if (this.props.defaultTime) {
-      defaultInputValue = this.formatTime(this.props.defaultTime);
-    }
+    const {
+      muiTheme: {
+        prepareStyles,
+      },
+      time,
+    } = this.state;
 
     return (
-      <div>
+      <div style={prepareStyles(Object.assign({}, style))}>
         <TextField
           {...other}
+          style={textFieldStyle}
           ref="input"
-          defaultValue={defaultInputValue}
+          value={time === emptyTime ? null : DateTime.formatTime(time, format, pedantic)}
           onFocus={this._handleInputFocus}
-          onTouchTap={this._handleInputTouchTap} />
+          onTouchTap={this._handleInputTouchTap}
+        />
         <TimePickerDialog
           ref="dialogWindow"
           initialTime={this.state.dialogTime}
           onAccept={this._handleDialogAccept}
           onShow={onShow}
           onDismiss={onDismiss}
-          format={format} />
+          format={format}
+          okLabel={okLabel}
+          cancelLabel={cancelLabel}
+          autoOk={autoOk}
+        />
       </div>
     );
   },
-
-  getTime() {
-    return this.state.time;
-  },
-
-  setTime(t) {
-    this.setState({
-      time: t,
-    });
-    this.refs.input.setValue(this.formatTime(t));
-  },
-
-  clearTime(t) {
-    this.refs.input.clearValue();
-  },
-
-  _handleDialogAccept(t) {
-    this.setTime(t);
-    if (this.props.onChange) this.props.onChange(null, t);
-  },
-
-  _handleInputFocus(e) {
-    e.target.blur();
-    if (this.props.onFocus) this.props.onFocus(e);
-  },
-
-  _handleInputTouchTap(e) {
-    e.preventDefault();
-
-    this.setState({
-      dialogTime: this.getTime(),
-    });
-
-    this.refs.dialogWindow.show();
-    if (this.props.onTouchTap) this.props.onTouchTap(e);
-  },
 });
 
-module.exports = TimePicker;
+export default TimePicker;

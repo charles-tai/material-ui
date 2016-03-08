@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const HardwarePowerInput = React.createClass({
+let HardwarePowerInput = (props) => (
+  <SvgIcon {...props}>
+    <path d="M2 9v2h19V9H2zm0 6h5v-2H2v2zm7 0h5v-2H9v2zm7 0h5v-2h-5v2z"/>
+  </SvgIcon>
+);
+HardwarePowerInput = pure(HardwarePowerInput)
+HardwarePowerInput.displayName = 'HardwarePowerInput';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M2 9v2h19V9H2zm0 6h5v-2H2v2zm7 0h5v-2H9v2zm7 0h5v-2h-5v2z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = HardwarePowerInput;
+export default HardwarePowerInput;

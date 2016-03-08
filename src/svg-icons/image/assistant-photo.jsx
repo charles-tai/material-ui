@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const ImageAssistantPhoto = React.createClass({
+let ImageAssistantPhoto = (props) => (
+  <SvgIcon {...props}>
+    <path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/>
+  </SvgIcon>
+);
+ImageAssistantPhoto = pure(ImageAssistantPhoto)
+ImageAssistantPhoto.displayName = 'ImageAssistantPhoto';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = ImageAssistantPhoto;
+export default ImageAssistantPhoto;

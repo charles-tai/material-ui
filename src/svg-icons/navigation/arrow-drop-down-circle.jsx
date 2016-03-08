@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const NavigationArrowDropDownCircle = React.createClass({
+let NavigationArrowDropDownCircle = (props) => (
+  <SvgIcon {...props}>
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 12l-4-4h8l-4 4z"/>
+  </SvgIcon>
+);
+NavigationArrowDropDownCircle = pure(NavigationArrowDropDownCircle)
+NavigationArrowDropDownCircle.displayName = 'NavigationArrowDropDownCircle';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 12l-4-4h8l-4 4z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = NavigationArrowDropDownCircle;
+export default NavigationArrowDropDownCircle;

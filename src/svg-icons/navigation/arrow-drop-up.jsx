@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const NavigationArrowDropUp = React.createClass({
+let NavigationArrowDropUp = (props) => (
+  <SvgIcon {...props}>
+    <path d="M7 14l5-5 5 5z"/>
+  </SvgIcon>
+);
+NavigationArrowDropUp = pure(NavigationArrowDropUp)
+NavigationArrowDropUp.displayName = 'NavigationArrowDropUp';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M7 14l5-5 5 5z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = NavigationArrowDropUp;
+export default NavigationArrowDropUp;

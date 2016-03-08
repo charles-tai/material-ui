@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const AvFastForward = React.createClass({
+let AvFastForward = (props) => (
+  <SvgIcon {...props}>
+    <path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/>
+  </SvgIcon>
+);
+AvFastForward = pure(AvFastForward)
+AvFastForward.displayName = 'AvFastForward';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = AvFastForward;
+export default AvFastForward;

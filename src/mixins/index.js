@@ -1,6 +1,10 @@
-module.exports = {
-  ClickAwayable: require('./click-awayable'),
-  WindowListenable: require('./window-listenable'),
-  StylePropable: require('./style-propable'),
-  StyleResizable: require('./style-resizable'),
+import StylePropable from './style-propable';
+import StyleResizable from './style-resizable';
+
+export {StylePropable};
+export {StyleResizable};
+
+export default {
+  StylePropable,
+  StyleResizable,
 };

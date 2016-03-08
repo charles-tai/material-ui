@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const HardwareKeyboardArrowRight = React.createClass({
+let HardwareKeyboardArrowRight = (props) => (
+  <SvgIcon {...props}>
+    <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"/>
+  </SvgIcon>
+);
+HardwareKeyboardArrowRight = pure(HardwareKeyboardArrowRight)
+HardwareKeyboardArrowRight.displayName = 'HardwareKeyboardArrowRight';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = HardwareKeyboardArrowRight;
+export default HardwareKeyboardArrowRight;

@@ -1,38 +1,37 @@
-const React = require('react');
-const ImmutabilityHelper = require('../utils/immutability-helper');
-const Styles = require('../utils/styles');
+import React from 'react';
+import warning from 'warning';
 
-// This mixin isn't necessary and will be removed in v0.11
+let hasWarned;
+const warn = () => {
+  warning(hasWarned, 'The \'material-ui/lib/mixins/style-propable.js\' mixin has been deprecated.' +
+    ' Please do not use this mixin as it will be removed in an upcoming release.');
+  hasWarned = true;
+};
 
-/**
- *	@params:
- *	styles = Current styles.
- *  props = New style properties that will override the current style.
- */
-module.exports = {
+export const mergeStyles = (...args) => {
+  warn();
+  return Object.assign({}, ...args);
+};
+
+export default {
 
   propTypes: {
     style: React.PropTypes.object,
   },
 
-  //Moved this function to ImmutabilityHelper.merge
-  mergeStyles() {
-    return ImmutabilityHelper.merge.apply(this, arguments);
+  mergeStyles,
+
+  prepareStyles(...args) {
+    warn();
+    const {
+      prepareStyles = (style) => (style),
+    } = (this.state && this.state.muiTheme) || (this.context && this.context.muiTheme) ||
+        (this.props && this.props.muiTheme) || {};
+
+    return prepareStyles(mergeStyles(...args));
   },
 
-  //Moved this function to /utils/styles.js
-  mergeAndPrefix() {
-    return Styles.mergeAndPrefix.apply(this, arguments);
-  },
-
-  // prepareStyles is used to merge multiple styles, make sure they are flipped to rtl
-  // if needed, and then autoprefix them. It should probably always be used instead of
-  // mergeAndPrefix.
-  // 
-  // Never call this on the same style object twice. As a rule of thumb, 
-  //   only call it when passing style attribute to html elements.
-  // If you call it twice you'll get a warning anyway.
-  prepareStyles() {
-    return Styles.prepareStyles.apply(Styles, [(this.state && this.state.muiTheme) || this.context.muiTheme].concat([].slice.apply(arguments)));
+  componentWillMount() {
+    warn();
   },
 };

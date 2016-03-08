@@ -4,8 +4,6 @@
 /* hightlight.js for syntax highlighting */
 @import "github.css";
 
-@import "codemirror.css";
-
 a {
   color: #ff4081;
   text-decoration: none;
@@ -17,6 +15,7 @@ a:hover {
 
 html {
   font-family: 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 body, h1, h2, h3, h4, h5, h6 {

@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const ActionEject = React.createClass({
+let ActionEject = (props) => (
+  <SvgIcon {...props}>
+    <path d="M5 17h14v2H5zm7-12L5.33 15h13.34z"/>
+  </SvgIcon>
+);
+ActionEject = pure(ActionEject)
+ActionEject.displayName = 'ActionEject';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M5 17h14v2H5zm7-12L5.33 15h13.34z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = ActionEject;
+export default ActionEject;

@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const ActionViewStream = React.createClass({
+let ActionViewStream = (props) => (
+  <SvgIcon {...props}>
+    <path d="M4 18h17v-6H4v6zM4 5v6h17V5H4z"/>
+  </SvgIcon>
+);
+ActionViewStream = pure(ActionViewStream)
+ActionViewStream.displayName = 'ActionViewStream';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M4 18h17v-6H4v6zM4 5v6h17V5H4z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = ActionViewStream;
+export default ActionViewStream;

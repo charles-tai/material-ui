@@ -1,37 +1,60 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const PropTypes = require('../utils/prop-types');
-const StylePropable = require('../mixins/style-propable');
-const Typography = require('../styles/typography');
-const Paper = require('../paper');
-const DefaultRawTheme = require('../styles/raw-themes/light-raw-theme');
-const ThemeManager = require('../styles/theme-manager');
+import React from 'react';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+import PropTypes from '../utils/prop-types';
+import Paper from '../paper';
+import getMuiTheme from '../styles/getMuiTheme';
+import Subheader from '../Subheader';
+import deprecated from '../utils/deprecatedPropType';
 
 const List = React.createClass({
 
-  mixins: [PureRenderMixin, StylePropable],
+  propTypes: {
+    /**
+     * These are usually ListItems that are passed to
+     * be part of the list.
+     */
+    children: React.PropTypes.node,
+
+    /**
+     * If true, the subheader will be indented by 72px.
+     */
+    insetSubheader: deprecated(React.PropTypes.bool,
+      'Refer to the `subheader` property.'),
+
+    /**
+     * Override the inline-styles of the root element.
+     */
+    style: React.PropTypes.object,
+
+    /**
+     * The subheader string that will be displayed at the top of the list.
+     */
+    subheader: deprecated(React.PropTypes.node,
+      'Instead, nest the `Subheader` component directly inside the `List`.'),
+
+    /**
+     * The style object to override subheader styles.
+     */
+    subheaderStyle: deprecated(React.PropTypes.object,
+      'Refer to the `subheader` property.'),
+
+    /**
+     * The zDepth prop passed to the Paper element inside list.
+     */
+    zDepth: PropTypes.zDepth,
+  },
 
   contextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  propTypes: {
-    insetSubheader: React.PropTypes.bool,
-    subheader: React.PropTypes.string,
-    subheaderStyle: React.PropTypes.object,
-    zDepth: PropTypes.zDepth,
-  },
-
-  //for passing default theme context to children
   childContextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  getChildContext () {
-    return {
-      muiTheme: this.state.muiTheme,
-    };
-  },
+  mixins: [
+    PureRenderMixin,
+  ],
 
   getDefaultProps() {
     return {
@@ -39,23 +62,28 @@ const List = React.createClass({
     };
   },
 
-  getInitialState () {
+  getInitialState() {
     return {
-      muiTheme: this.context.muiTheme ? this.context.muiTheme : ThemeManager.getMuiTheme(DefaultRawTheme),
+      muiTheme: this.context.muiTheme || getMuiTheme(),
     };
   },
 
-  //to update theme inside state whenever a new theme is passed down
-  //from the parent / owner using context
-  componentWillReceiveProps (nextProps, nextContext) {
-    let newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-    this.setState({muiTheme: newMuiTheme});
+  getChildContext() {
+    return {
+      muiTheme: this.state.muiTheme,
+    };
+  },
+
+  componentWillReceiveProps(nextProps, nextContext) {
+    this.setState({
+      muiTheme: nextContext.muiTheme || this.state.muiTheme,
+    });
   },
 
   render() {
     const {
       children,
-      insetSubheader,
+      insetSubheader = false,
       style,
       subheader,
       subheaderStyle,
@@ -63,38 +91,36 @@ const List = React.createClass({
       ...other,
     } = this.props;
 
+    let hasSubheader = false;
+
+    if (subheader) {
+      hasSubheader = true;
+    } else {
+      const firstChild = React.Children.toArray(children)[0];
+      if (React.isValidElement(firstChild) && firstChild.type === Subheader) {
+        hasSubheader = true;
+      }
+    }
+
     const styles = {
       root: {
         padding: 0,
         paddingBottom: 8,
-        paddingTop: subheader ? 0 : 8,
-      },
-
-      subheader: {
-        color: Typography.textLightBlack,
-        fontSize: 14,
-        fontWeight: Typography.fontWeightMedium,
-        lineHeight: '48px',
-        paddingLeft: insetSubheader ? 72 : 16,
+        paddingTop: hasSubheader ? 0 : 8,
       },
     };
-
-    let subheaderElement;
-    if (subheader) {
-      const mergedSubheaderStyles = this.prepareStyles(styles.subheader, subheaderStyle);
-      subheaderElement = <div style={mergedSubheaderStyles}>{subheader}</div>;
-    }
 
     return (
       <Paper
         {...other}
-        style={this.mergeStyles(styles.root, style)}
-        zDepth={zDepth}>
-        {subheaderElement}
+        style={Object.assign(styles.root, style)}
+        zDepth={zDepth}
+      >
+        {subheader && <Subheader inset={insetSubheader} style={subheaderStyle}>{subheader}</Subheader>}
         {children}
       </Paper>
     );
   },
 });
 
-module.exports = List;
+export default List;

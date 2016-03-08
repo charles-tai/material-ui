@@ -1,33 +1,19 @@
-const React = require('react');
-const DateTime = require('../utils/date-time');
-const DayButton = require('./day-button');
-const ClearFix = require('../clearfix');
-
+import React from 'react';
+import DateTime from '../utils/date-time';
+import DayButton from './day-button';
+import ClearFix from '../clearfix';
 
 const CalendarMonth = React.createClass({
 
   propTypes: {
-    displayDate: React.PropTypes.object.isRequired,
-    selectedDate: React.PropTypes.object.isRequired,
     autoOk: React.PropTypes.bool,
+    displayDate: React.PropTypes.object.isRequired,
+    firstDayOfWeek: React.PropTypes.number,
     maxDate: React.PropTypes.object,
     minDate: React.PropTypes.object,
     onDayTouchTap: React.PropTypes.func,
+    selectedDate: React.PropTypes.object.isRequired,
     shouldDisableDate: React.PropTypes.func,
-  },
-
-  render() {
-    let styles = {
-      lineHeight: '32px',
-      textAlign: 'center',
-      padding: '16px 14px 0 14px',
-    };
-
-    return (
-      <div style={styles}>
-        {this._getWeekElements()}
-      </div>
-    );
   },
 
   isSelectedDateDisabled() {
@@ -35,7 +21,7 @@ const CalendarMonth = React.createClass({
   },
 
   _getWeekElements() {
-    let weekArray = DateTime.getWeekArray(this.props.displayDate);
+    const weekArray = DateTime.getWeekArray(this.props.displayDate, this.props.firstDayOfWeek);
 
     return weekArray.map((week, i) => {
       return (
@@ -48,32 +34,32 @@ const CalendarMonth = React.createClass({
 
   _getDayElements(week, i) {
     return week.map((day, j) => {
-      let isSameDate = DateTime.isEqualDate(this.props.selectedDate, day);
-      let disabled = this._shouldDisableDate(day);
-      let selected = !disabled && isSameDate;
+      const isSameDate = DateTime.isEqualDate(this.props.selectedDate, day);
+      const disabled = this._shouldDisableDate(day);
+      const selected = !disabled && isSameDate;
 
       if (isSameDate) {
         if (disabled) {
           this._selectedDateDisabled = true;
-        }
-        else {
+        } else {
           this._selectedDateDisabled = false;
         }
       }
 
       return (
         <DayButton
-          key={'db' + i + j}
+          key={`db${(i + j)}`}
           date={day}
           onTouchTap={this._handleDayTouchTap}
           selected={selected}
-          disabled={disabled} />
+          disabled={disabled}
+        />
       );
     }, this);
   },
 
-  _handleDayTouchTap(e, date) {
-    if (this.props.onDayTouchTap) this.props.onDayTouchTap(e, date);
+  _handleDayTouchTap(event, date) {
+    if (this.props.onDayTouchTap) this.props.onDayTouchTap(event, date);
   },
 
   _shouldDisableDate(day) {
@@ -84,6 +70,20 @@ const CalendarMonth = React.createClass({
     return disabled;
   },
 
+  render() {
+    const styles = {
+      lineHeight: '32px',
+      textAlign: 'center',
+      padding: '16px 14px 0 14px',
+    };
+
+    return (
+      <div style={styles}>
+        {this._getWeekElements()}
+      </div>
+    );
+  },
+
 });
 
-module.exports = CalendarMonth;
+export default CalendarMonth;

@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const ActionViewColumn = React.createClass({
+let ActionViewColumn = (props) => (
+  <SvgIcon {...props}>
+    <path d="M10 18h5V5h-5v13zm-6 0h5V5H4v13zM16 5v13h5V5h-5z"/>
+  </SvgIcon>
+);
+ActionViewColumn = pure(ActionViewColumn)
+ActionViewColumn.displayName = 'ActionViewColumn';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M10 18h5V5h-5v13zm-6 0h5V5H4v13zM16 5v13h5V5h-5z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = ActionViewColumn;
+export default ActionViewColumn;

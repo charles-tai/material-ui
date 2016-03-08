@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const NavigationArrowForward = React.createClass({
+let NavigationArrowForward = (props) => (
+  <SvgIcon {...props}>
+    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+  </SvgIcon>
+);
+NavigationArrowForward = pure(NavigationArrowForward)
+NavigationArrowForward.displayName = 'NavigationArrowForward';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = NavigationArrowForward;
+export default NavigationArrowForward;

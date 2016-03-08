@@ -16,7 +16,7 @@ in the `./js` folder.
 
 ## Advanced usage and Custom builds
 
-`node build.sh --help` can be used to pull up options available for building.
+`node build.js --help` can be used to pull up options available for building.
 
 You can build your own SVG icons as well as collections like [game-icons](http://game-icons.net/) through environmental variables.
 
@@ -28,5 +28,5 @@ You can build your own SVG icons as well as collections like [game-icons](http:/
 * `--file-suffix` - Filter only files ending with a suffix
 
 If you experience any issues building icons or would like a feature added,
-[file and issue](https://github.com/callemall/material-ui/issues) and let us
+[file an issue](https://github.com/callemall/material-ui/issues) and let us
 know.

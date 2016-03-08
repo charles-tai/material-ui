@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const ActionSwapVert = React.createClass({
+let ActionSwapVert = (props) => (
+  <SvgIcon {...props}>
+    <path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/>
+  </SvgIcon>
+);
+ActionSwapVert = pure(ActionSwapVert)
+ActionSwapVert.displayName = 'ActionSwapVert';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = ActionSwapVert;
+export default ActionSwapVert;

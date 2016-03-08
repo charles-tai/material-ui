@@ -1,124 +1,132 @@
-const React = require('react');
-const Styles = require('../styles');
-const StylePropable = require('../mixins/style-propable');
-const ThemeManager = require('../styles/theme-manager');
-const DefaultRawTheme = require('../styles/raw-themes/light-raw-theme');
+import React from 'react';
+import getMuiTheme from '../styles/getMuiTheme';
 
+function getStyles(props, state) {
+  const {
+    cardMedia,
+ } = state.muiTheme;
+  return {
+    root: {
+      position: 'relative',
+    },
+    overlayContainer: {
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      right: 0,
+      left: 0,
+    },
+    overlay: {
+      height: '100%',
+      position: 'relative',
+    },
+    overlayContent: {
+      position: 'absolute',
+      bottom: 0,
+      right: 0,
+      left: 0,
+      paddingTop: 8,
+      background: cardMedia.overlayContentBackground,
+    },
+    media: {},
+    mediaChild: {
+      verticalAlign: 'top',
+      maxWidth: '100%',
+      minWidth: '100%',
+      width: '100%',
+    },
+  };
+}
 
 const CardMedia = React.createClass({
 
-  mixins:[StylePropable],
+  propTypes: {
+    actAsExpander: React.PropTypes.bool,
+    children: React.PropTypes.node,
+    expandable: React.PropTypes.bool,
+    mediaStyle: React.PropTypes.object,
+    overlay: React.PropTypes.node,
+    overlayContainerStyle: React.PropTypes.object,
+    overlayContentStyle: React.PropTypes.object,
+    overlayStyle: React.PropTypes.object,
+
+    /**
+     * Override the inline-styles of the root element.
+     */
+    style: React.PropTypes.object,
+  },
 
   contextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  //for passing default theme context to children
   childContextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  getChildContext () {
+  getInitialState() {
+    return {
+      muiTheme: this.context.muiTheme || getMuiTheme(),
+    };
+  },
+
+  getChildContext() {
     return {
       muiTheme: this.state.muiTheme,
     };
   },
 
-  getInitialState() {
-    return { 
-      muiTheme: this.context.muiTheme ? this.context.muiTheme : ThemeManager.getMuiTheme(DefaultRawTheme),
-    };
-  },
-
-  //to update theme inside state whenever a new theme is passed down
-  //from the parent / owner using context
-  componentWillReceiveProps (nextProps, nextContext) {
-    let newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-    this.setState({muiTheme: newMuiTheme});
-  },
-
-  propTypes: {
-    overlay: React.PropTypes.node,
-    style: React.PropTypes.object,
-    overlayStyle: React.PropTypes.object,
-    overlayContainerStyle: React.PropTypes.object,
-    overlayContentStyle: React.PropTypes.object,
-    mediaStyle: React.PropTypes.object,
-    expandable: React.PropTypes.bool,
-    actAsExpander: React.PropTypes.bool,
-  },
-
-  getStyles() {
-    return {
-      root: {
-        position: 'relative',
-      },
-      overlayContainer: {
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        right: 0,
-        left: 0,
-      },
-      overlay: {
-        height: '100%',
-        position: 'relative',
-      },
-      overlayContent: {
-        position: 'absolute',
-        bottom: 0,
-        right: 0,
-        left: 0,
-        paddingTop: 8,
-        background: Styles.Colors.lightBlack,
-      },
-      media: {},
-      mediaChild: {
-        verticalAlign: 'top',
-        maxWidth: '100%',
-        minWidth: '100%',
-      },
-    };
+  componentWillReceiveProps(nextProps, nextContext) {
+    this.setState({
+      muiTheme: nextContext.muiTheme || this.state.muiTheme,
+    });
   },
 
   render() {
-    let styles = this.getStyles();
-    let rootStyle = this.prepareStyles(styles.root, this.props.style);
-    let mediaStyle = this.prepareStyles(styles.media, this.props.mediaStyle);
-    let overlayContainerStyle = this.prepareStyles(styles.overlayContainer, this.props.overlayContainerStyle);
-    let overlayContentStyle = this.prepareStyles(styles.overlayContent, this.props.overlayContentStyle);
-    let overlayStyle = this.prepareStyles(styles.overlay, this.props.overlayStyle);
+    const {
+      prepareStyles,
+    } = this.state.muiTheme;
 
-    let children = React.Children.map(this.props.children, (child) => {
-      return React.cloneElement(child, {style: this.prepareStyles(styles.mediaChild, child.props.style)});
+    const styles = getStyles(this.props, this.state);
+    const rootStyle = Object.assign(styles.root, this.props.style);
+    const mediaStyle = Object.assign(styles.media, this.props.mediaStyle);
+    const overlayContainerStyle = Object.assign(styles.overlayContainer, this.props.overlayContainerStyle);
+    const overlayContentStyle = Object.assign(styles.overlayContent, this.props.overlayContentStyle);
+    const overlayStyle = Object.assign(styles.overlay, this.props.overlayStyle);
+    const titleColor = this.state.muiTheme.cardMedia.titleColor;
+    const subtitleColor = this.state.muiTheme.cardMedia.subtitleColor;
+    const color = this.state.muiTheme.cardMedia.color;
+
+    const children = React.Children.map(this.props.children, (child) => {
+      return React.cloneElement(child, {
+        style: prepareStyles(Object.assign({}, styles.mediaChild, child.props.style)),
+      });
     });
 
-    let overlayChildren = React.Children.map(this.props.overlay, (child) => {
+    const overlayChildren = React.Children.map(this.props.overlay, (child) => {
       if (child.type.displayName === 'CardHeader' || child.type.displayName === 'CardTitle') {
         return React.cloneElement(child, {
-          titleColor: Styles.Colors.darkWhite,
-          subtitleColor: Styles.Colors.lightWhite,
+          titleColor: titleColor,
+          subtitleColor: subtitleColor,
         });
-      }
-      else if (child.type.displayName === 'CardText') {
+      } else if (child.type.displayName === 'CardText') {
         return React.cloneElement(child, {
-          color: Styles.Colors.darkWhite,
+          color: color,
         });
-      }
-      else {
+      } else {
         return child;
       }
     });
 
     return (
-      <div {...this.props} style={rootStyle}>
-        <div style={mediaStyle}>
+      <div {...this.props} style={prepareStyles(rootStyle)}>
+        <div style={prepareStyles(mediaStyle)}>
           {children}
         </div>
         {(this.props.overlay) ?
-          <div style={overlayContainerStyle}>
-            <div style={overlayStyle}>
-              <div style={overlayContentStyle}>
+          <div style={prepareStyles(overlayContainerStyle)}>
+            <div style={prepareStyles(overlayStyle)}>
+              <div style={prepareStyles(overlayContentStyle)}>
                 {overlayChildren}
               </div>
             </div>
@@ -128,4 +136,4 @@ const CardMedia = React.createClass({
   },
 });
 
-module.exports = CardMedia;
+export default CardMedia;

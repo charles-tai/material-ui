@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const ImageFlashOn = React.createClass({
+let ImageFlashOn = (props) => (
+  <SvgIcon {...props}>
+    <path d="M7 2v11h3v9l7-12h-4l4-8z"/>
+  </SvgIcon>
+);
+ImageFlashOn = pure(ImageFlashOn)
+ImageFlashOn.displayName = 'ImageFlashOn';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M7 2v11h3v9l7-12h-4l4-8z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = ImageFlashOn;
+export default ImageFlashOn;

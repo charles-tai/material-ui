@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const MapsLocalBar = React.createClass({
+let MapsLocalBar = (props) => (
+  <SvgIcon {...props}>
+    <path d="M21 5V3H3v2l8 9v5H6v2h12v-2h-5v-5l8-9zM7.43 7L5.66 5h12.69l-1.78 2H7.43z"/>
+  </SvgIcon>
+);
+MapsLocalBar = pure(MapsLocalBar)
+MapsLocalBar.displayName = 'MapsLocalBar';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M11 13v6H6v2h12v-2h-5v-6l8-8V3H3v2l8 8zM7.5 7l-2-2h13l-2 2h-9z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = MapsLocalBar;
+export default MapsLocalBar;

@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const ImageBrightness1 = React.createClass({
+let ImageBrightness1 = (props) => (
+  <SvgIcon {...props}>
+    <circle cx="12" cy="12" r="10"/>
+  </SvgIcon>
+);
+ImageBrightness1 = pure(ImageBrightness1)
+ImageBrightness1.displayName = 'ImageBrightness1';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <circle cx="12" cy="12" r="10"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = ImageBrightness1;
+export default ImageBrightness1;

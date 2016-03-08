@@ -1,3 +1,455 @@
+## HEAD
+
+##### Breaking Changes
+- [Styles] RaisedButton, FlatButton, and FloatingActionButton now properly use primary/secondary colors
+- [Menu] Remove Paper (#3559)
+
+## 0.15.0-alpha.1
+###### _Feb 27, 2016_
+
+This release includes huge improvements to the implementation
+of components and utility modules. The most important improvement
+is the removal of mixins from the library, thanks to the
+[great efforts](https://github.com/callemall/material-ui/pulls?utf8=%E2%9C%93&q=is%3Apr+is%3Aclosed+author%3Anewoga+style-propable)
+of @newoga :+1:
+
+There are also improvements to the unit testing infrastructure. We own this
+great improvement to @nathanmarks, thanks a lot :+1:.
+
+Please note that `raw-themes` are deprecated with no warning! they will be removed
+from the code with the 0.16.0 release.
+
+##### Breaking Changes
+- [Cleanup] Remove the deprecated API of `0.14.x`. (#3108)
+- [Styles] Removed all `getStyles` functions from the components (#3351)
+- [Core] Remove the `window-listenable` mixin (#3334)
+- [Core] Remove `context-pure` mixin (#3331)
+- [Core] Remove `click-awayable` mixin (#3360)
+- [Core] Utilize keycode library and remove `key-code` util (#3371)
+- [FloatingActionButton] `className` is now set on the root element (#2310)
+- [RaisedButton] `className` is now set on the root element (#3122)
+- [LeftNav] `className` and `style` are now set on the root element (#3322)
+- [Colors] Removed default export in favor of singular exports (#2825) <br>
+**Note** This can be temporarily worked around by changing <br>
+`import Colors from 'material-ui/lib/styles/colors';` <br> to <br>
+`import * as Colors from 'material-ui/lib/styles/colors';`.
+- [DatePicker] Standardize for ISO8601. (#3417)
+
+##### New Component
+- [Subheader](#3033) (Thanks to @pradel)
+
+##### General
+- [Tests] Updates to test setup and additional testing option for unit tests (#3405)
+- [Tests] Add support for codecov (#3421)
+- [Tests] Badge unit tests (#3427) (Thanks to @pradel)
+- [Tests] AppBar unit tests (#3487) (Thanks to @pradel)
+- [Tests] GridList unit tests (#3488) (Thanks to @pradel)
+- [Tests] SvgIcon unit tests (#3489) (Thanks to @pradel)
+- [Tests] FontIcon unit tests (#3490) (Thanks to @pradel)
+- [Theme] Apply overall themeing improvements (#3267, #3316, #3340, #3399)
+- [Style] Fix the prefixer tool regression (#3136)
+- [Style] Make some unthemeable elements themeable (#3269) (Thanks to @pdf)
+- [Style] Fix tap highlight color (#3429)
+- [Core] Replace merge implementation in utils/styles with Object.assign (#3124)
+- [Core] Remove dependency on utils/styles from components (#3169)
+- [Core] Remove style-propable mixin from components (#2852)
+- [Core] Remove `window-listenable` mixin from components (#3305) (Thanks to @newoga)
+- [Core] Typography moved inside muitheme (#3301)
+- [Core] Update lodash version to 4.1.0 (#3324)
+- [Core] Migrate color to muiTheme (#3314)
+- [Core] Remove usage of `isMounted()` (#3437)
+- [Docs] Add page title (#3246)
+- [Docs] DatePicker - Add disabled dates example (#3167)
+- [Docs] Upgrade dependencies (#3343)
+- [Docs] Enable GPU rasterization (#3451)
+- [Docs] Add versions to docs site (#3383)
+- [eslint] Upgrade to v2 (#3390)
+- Added the following eslint rules:
+  1. Enforce `arrow-parens` (#3207)
+  1. Enforce `prefer-template` (#3208, #3242)
+  1. Enforce `no-unneeded-ternary` (#3320)
+  1. Enforce `prefer-const` (#3315)
+  1. Enforce `jsx-space-before-closing` (#3397)
+  1. Enforce `id-blacklist` and blacklist `e` (#3398)
+  1. Enforce `padded-blocks: never` (#3493)
+
+##### Component Fixes / Enhancements
+- [AutoComplete] Added `maxSearchResults` property (#3262)
+- [AutoComplete] Apply the style property only on the root component (#3243)
+- [AutoComplete] Apply various improvement (#3214) (Thanks to @oliviertassinari)
+- [Autocomplete] Disable browser default autocomplete popup (#3253)
+- [AutoComplete] Fix the focus / blur issue (#3356) (Thanks to @oliviertassinari)
+- [Card] Removed hidden overflow (#3447)
+- [Card] Support for controlled expansion (#3258) (Thanks to @cgestes)
+- [CardActions] Allow to accept false as child (#3215)
+- [Checkbox] Disabled style error fix (#3432)
+- [DatePicker] Default to ISO-8601 DateTimeFormat & `firstDayOfWeek` (#3417)
+- [Dialog] Fix overflow (#3460)
+- [DropDownMenu] Expose Menu listStyle property (#3294)
+- [DropDownMenu] Fix `openImmediately` regression (#3384)
+- [DropDownMenu] Safari select-field fix (#3175)
+- [EnhancedButton] Fix enhanced buttons containing a link instead of a button (#3303)
+- [EnhancedSwitch] Added inputStyle prop to enhanced switch (#1693)
+- [EnhancedTextArea] Provide various style fixes (#3277)
+- [FlatBotton] Fix alignment between text and icons (#3380)
+- [FloatingActionButton] Expose Paper zDepth (#3387)
+- [IconButton] Fixed tooltip for disabled component (#3458)
+- [IconButton] Fixed tooltip ripple size for IE (#3016)
+- [IconMenu] Document `multiple` property of Menu (#3223)
+- [IconMenu] Enable `useLayerForClickAway` (#3400)
+- [IconMenu] Support MenuItem nested menuItems (#3265)
+- [InkBar] remove `&nbsp;` (#3283)
+- [LeftNav] Add a configurable zDepth (#3495)
+- [LeftNav] Add iOS momentum scroll (#2946)
+- [List] Fix issue with styling on list related components (#3278)
+- [ListItem] Fix hardcoded `secondaryTextColor` (#3288)
+- [Menu] Fix `_isChildSelected` child not recognising first child (#3165)
+- [Menu] Fix a regression that would apply the select style to all the MenuItems (#3244)
+- [Menu] Safari select-field fix (#3175)
+- [Popover] Handle the touch event on touch enabled devices (#3389)
+- [RadioButton] Allow customising icons (#3285)
+- [RaisedButton] Customizable ripple effect style (#3368)
+- [RaisedButton] Fix alignment between text and icons (#3366)
+- [Slider] Remove style-propable mixin and react-dom (#3332) (Thanks to @felipethome)
+- [SvgIcon] Fix behavior for `onMouseEnter` and `onMouseLeave` (#3481)
+- [SvgIcon] Use stateless functional component instead of `React.createClass` (#3326)
+- [Table] Send event object after click, hover, hoverOut on cell (#3002)
+- [TextField] Add textareaStyle property (#3238)
+- [TextField] Fix defaultValue behavior (#3239)
+- [TextField] Fix wrong label id (#3240)
+- [TextField] Fixed a bug where clicking on floating label and typing simultaneuosly loses keypress (#3055)
+- [TextField] Fixed ie9-ie10 click focus problem (#3193)
+- [TimePicker] Update time state on new defaultTime prop (#3095)
+- [Toggle] Fixes styling issue (#3299)
+- [ToolbarTitle] Fix overflow (#3250)
+- [TouchRipple] Abort on scroll (#3407)
+
+##### Deprecations
+- [Menu] Deprecated built in `animated` (#3216)
+- [Core] Deprecated `style-propable` mixin and `utils/styles` (#3351)
+- [Core] Deprecated `ThemeDecorator` in favor of `MuiThemeProvider` (#3267)
+- [Core] Deprecated `theme-manager` and `raw-themes` (#3267)
+
+## 0.14.4
+###### _Feb 02, 2016_
+
+##### General
+- [CRITICAL] Fixed a regression that completely disabled the auto-prefixer (#3142)
+- [Core] Implements prepareStyles as composition of functions in muiTheme (#2986) (Thanks to @newoga)
+- [Docs] Contributing guide (#3075)
+- [Docs] Added a `Related Projects` section (#3102)
+- [Examples] General updates (#3078)
+
+##### Component Fixes / Enhancements
+- [Tabs] Removed the calc style property (#3058)
+- [Tabs] Added icon and text (#3042)
+- [Tabs] Use `FlatButtons` for tabs (#3051)
+- [AutoComplete] Fixed regression of undefined muiTheme (#3069)
+- [List] Auto-expand SelectableList (#3039)
+- [DatePicker] Added `disabled` property (#3060)
+- [Buttons] Fixed the vertical alignment issue (#3100)
+- [RaisedButton] Fix the default value of `labelPosition` (#3115)
+- [FlatButton] Fix the default value of `labelPosition` (#3115)
+
+## 0.14.3
+###### _Jan 26, 2016_
+
+##### Breaking Changes
+
+Note that these are not essentially breaking changes.
+Unless you have used these implementation details in your code.
+
+- [Internal] Remove `controllable.js` mixin (#2889)
+- [Internal] Remove `mergeAndPrefix()` (#2886)
+- [Internal] Remove `utils/extend.js` (#2933)
+- [Internal] Remove `utils/immutability-helper.js` (#2907)
+
+##### General
+- [Examples] Move `DateTimeFormat` polyfill to the example (#3024)
+- [Docs] Add title and description to code examples, thanks to @mbrookes's hard work (#2927)
+- [Docs] Add a showcase section (#2910)
+- [Docs] Hide code examples by default (#2911)
+- [Docs] Add [Cloudcraft](https://cloudcraft.co/) to Showcase (#3036)
+- [Docs] Migrated the following pages to use the new documentation standard:
+  1. [TimePicker] (#2849)
+  1. [Table] (#2848)
+  1. [Switches] (#2872)
+  1. [Buttons] (#2874)
+  1. [AutoComplete] (#2871)
+  1. [Popover] (#2870)
+  1. [IconMenu] (#2882)
+- Added the following eslint rules:
+  1. Extend `eslint:recommended` (#2854)
+  1. `one-var` (#2855)
+  1. `brace-style` (#2855)
+  1. `react/jsx-pascal-case` (#2953)
+  1. `react/jsx-max-props-per-line` (#2953)
+  1. `react/jsx-closing-bracket-location` (#2953)
+  1. `jsx-equals-spacing` (#3035)
+- [Performance] Fix V8 deopt, leakage of `arguments` (#2876)
+- [ServerSideRendering] Make userAgent contexual (#3009)
+
+##### Component Fixes / Enhancements
+- [Slider] Avoid selection when dragging (#2827)
+- [Snackbar] Execute onDimiss callback after snackbar has closed (#2881)
+- [Table] Don't use `for...of` on table children (#2904)
+- [RenderToLayer] Fix leaking of event (#2935)
+- [FlatButton] Fix shared memory property modification (#2964)
+- [DatePicker] Add `firstDayOfWeek` and days abbreviations (#2899)
+- [ListItem] Added nestedItemStyle prop (#2990)
+- [ListItem] when disabled, `className` is ignored (#2723)
+- [EnhancedButton] Make keyup event respect `disableKeyboardFocus` (#3000)
+- [Dialog] Fix overlay scroll for nested dialogs (#2893)
+- [SvgIcons] Remove fill attributes (#3034)
+- [Paper] Allow the box shadow color to be changed (#3003)
+
+##### Deprecations
+- [DropDownIcon] Will be removed with `0.15.0` (#2994)
+
+## 0.14.2
+###### _Jan 08, 2016_
+
+##### General
+- [CRITICAL] Fix imports using require() style syntax (#2804) thanks @newoga
+- [Examples] Upgrade to babel 6 for browserify (#2795)
+- [Docs] Migrated the following pages to use the new documentation standard:
+  1. [RefreshIndicator] (#2799)
+  1. [Icon] (#2695)
+  1. [Lists] (#2782)
+  1. [Progress] (#2798)
+  1. [Sliders] (#2800)
+  1. [Paper] (#2797)
+  1. [Menus] (#2785)
+- Added the following eslint rules:
+  1. `react/jsx-indent` (#2808)
+
+##### Component Fixes / Enhancements
+- [DatePicker] Update slide direction (#2791)
+- [AutoComplete] Add 2 extra filters for text matching (#2755)
+- [TableRow] Fix row height in IE (#2812)
+
+## 0.14.1
+###### _Jan 05, 2016_
+
+##### General
+- Upgrade to babel v6 (#2620, #2709)
+- [Docs] Improve the performance of the production build (#2680)
+- [Docs] Improve the AppLeftNav for mobile (#2690)
+- [Docs] Use a single LeftNav (#2721)
+- [Docs] Migrated the following pages to use the new documentation standard:
+  1. [DatePicker] (#2622)
+  1. [GridList] (#2681)
+  1. [SelectField] (#2694)
+  1. [IconButton] (#2700)
+- Added the following eslint rules:
+  1. react/sort-comp (#2774, #2776)
+
+##### Component Fixes / Enhancements
+- [MenuItem] Fix icon position (#2661)
+- [SelectableList] Recursively extend children (#2320)
+- [SelectField] Add hintStyle (#2710)
+- [EnhancedButton] Avoid rendering `<a>` element (#2708)
+- [LeftNav] Only transition the transform property (#2730)
+- [TextField] Fix `errorText` when using `multiLine` (#2742)
+- [TimePicker] Update am/pm buttons (#2757)
+
+##### Deprecations
+- [Dialog] Deprecate width (#2753)
+
+## 0.14.0
+###### _Dec 25, 2015_
+
+The chagnes in `0.14.0-rc1` and `o.14.0-rc2` are also included as part of this release.
+Have a look at them as well.
+
+##### General
+- [Docs] Migrated the following pages to use the new documentation standard:
+  1. [Tabs] (#2515)
+  1. [Snackbar] (#2562)
+  1. [DropDownMenu] (#2565)
+  1. [Card] (#2590)
+- Added the following eslint rules:
+  1. key-spacing (#2552)
+- [SvgIcon] Improved the code generation tasks (#2606)
+- [ES6] Use module everywhere (#2614)
+- Added a temporary bootstrap project for ReactNative to pave the way for ReactNative support (#2611)
+- Clean up CSS classes (#2630)
+
+##### Component Fixes / Enhancements
+- [SelectField] [TextField] Fixed error styling issue (#2539)
+- [TextField] Implemented optional underline (#2476)
+- [AutoComplete] Migrated to use popover (#2634)
+
+##### Deprecations
+- [DropDownMenu] [SelectField] Deprecated `menuItems`, these components are now composable. (#2565)
+
+## 0.14.0-rc2
+###### _Dec 15, 2015_
+
+##### Breaking Changes
+
+- [Menu] Depreciation of the old menu, introduces a very small breaking change (#2443)
+- [Dialog] Removed deprecated API (#2396)
+- zIndex, rework them to be more coherent (#2444)
+
+##### General
+- Decoupled `Popover` animation from the component to increase flexibility (#2367)
+- [Tests] Migrated tests to use the new `react-addons-test-utils` package (#2401)
+- [Docs] Improvements to the documentation site (#2426, #2421, #2438, #2479, #2508)
+- [Docs] Migrated the following pages to use the new documentation standard:
+  1. [AppBar] (#2382) *also where the new standard was introduced by @oliviertassinari*
+  1. [Avatar] (#2407)
+  1. [Toolbars] (#2415)
+  1. [Badge] (#2489)
+  1. [Dialog] (#2483)
+  1. [LeftNav] (#2507)
+- Added the following eslint rules:
+  1. react/jsx-indent-props (#2377)
+  1. max-len (#2381)
+  1. wrap-multilines (#2419)
+
+##### Component Fixes / Enhancements
+- [Card] Use `preventDefault()` when handling expansion (#2495)
+- [CardHeader] Made `avatar` property optional (#2397)
+- [Checkbox] Now updates it's state when `checked` property changes (#2464)
+- [DatePicker] Fix year selection (#2410)
+- [Dialog] Added `overlayStyle` property (#2431)
+- [Dialog] Added `width` property (#2387)
+- [Divider] Initial implementation. Thanks to @newoga (#2473)
+- [DropDownMenu] Added `menuStyle` property (#2389)
+- [DropDownMenu] Now uses `Popover` (#2150)
+- [DropDownMenu] Now bubbles keyboard events (#2461)
+- [FlatButton] Adjusted background, hover and ripple colors (#2488)
+- [IconMenu] Added `open` and `onRequestChange` properties (#2383)
+- [ListItem] Added option to toggle nested list items on primary action (#2390)
+- [Menu] Fixed an error when children is only one child (#2402)
+- [Menu] Remove absolute positioning (#2455)
+- [Menu] Fixed issue when passed null children (#2429)
+- [SelectField] Fixed the propagation of underline styles (#2405)
+- [TableRow] Fixed a bug when unselectable rows could still be selected (#2503)
+
+##### Deprecations
+- The old menu components under the `material-ui/lib/menu` folder (#2443)
+- The `actions` property of `Dialog` accepting a JSON is deprecated (#2483)
+- The `menuItems` of `LeftNav` and all the related properties are now deprecated in favor of composibility (#2507)
+
+
+## 0.14.0-rc1
+###### _Dec 4, 2015_
+
+##### Breaking Changes
+- [IconMenu] removed openDirection prop in favor of anchorOrigin and targetOrigin (#2149)
+
+##### General
+- Use ES6 import / export syntax over require (#2253, #2333, #2334)
+- Dialog render-to-layer version (#2129)
+- Add declarative props to LeftNav, deprecate methods (#2180, #2351)
+- Add linting to test files (#2273)
+- Support nested menu items using Popover (#2148)
+- [DropdownMenu] add labelMember prop (#2285)
+- Add new ESLint rules (#2293, #2314, #2319, #2348, #2360, #2365, #2366)
+- Add unit tests for Dialog (#2298)
+- [AutoComplete] Support changing searchText via props (#2306)
+- [AutoComplete] dataSource prop is of type array (#2286)
+- [AppBar] add titleStyle prop (#2324)
+- [TimePicker] update as per spec (#2358)
+- [Popover] add useLayerForClickAway prop (#2359)
+
+##### Component Fixes / Enhancements
+- Fix wrong proptype for value in RadioButton (#2276)
+- Make LeftNav swipeable only from far left / right (#2263)
+- [TextField] allow rowsMax prop to equal rows prop (#2312)
+- Fix Invariant Violation error in ClickAwayable mixin (#2296)
+- [DatePicker] fix calendarTextColor context key (#2318)
+- Fix and improve examples (#2344, #2345)
+- [Dropdown][SelectField] change value PropType to React.PropTypes.any (#2352)
+- [CardActions] prevent children styles from being overridden (#2361)
+
+## 0.13.4
+###### _Nov 24, 2015_
+
+##### General
+- Introduced SelectableEnhance HOC to wrap List with valueLink (#1976)
+- Added color prop to LinearProgress and RefreshIndicator (#2206)
+- [AutoComplete] new component! (#2187) (thanks @yongxu)
+- [Table] added wrapperStyle prop to override table wrapper's styles (#2238)
+- Updated SVG icons (#2240)
+- [Table] added props for headerStyle, bodyStyle and footerStyle (#2246)
+
+##### Component Fixes / Enhancements
+- Fixed double ripple due to compat mouse down (#2216)
+- [RenderToLayer] iframe support for clickaway (#2210)
+- [TextField] Fixed floating label element not allowing focus (#2228)
+- [SelectField] onFocus and onBlur handlers passed to underlying TextField component (#2102)
+
+## 0.13.3
+###### _Nov 17, 2015_
+
+##### General
+- [Snackbar] add bodyStyle prop to style child div (#2104)
+- [DatePicker] add container prop to display DatePicker in-line or inside Dialog (#2120 and #2153)
+- [AppBar] add relative positioning for z-index to take effect (#1478)
+- [AppBar] add onTitleTouchTap prop to AppBar (#2125)
+- [Popover] new component! (#2043) (thanks @chrismcv)
+- Split [SelectField] and [TextField] doc pages (#2161)
+
+##### Component Fixes / Enhancements
+- [SelectField] onChange triggered consistently when using value prop (#1610)
+- [Dialog] fix page scrolling behind dialog after resizing (#1946)
+- [DatePicker] fix calendar height (#2141)
+- [TimePicker] allow to set time to null (#2108)
+
+## 0.13.2
+###### _Nov 9, 2015_
+
+##### General
+- Add tabs with slide effect (#1907)
+- Universal rendering support (#2007) (thanks @Cavitt)
+- Add labelPosition prop to buttons (#2014)
+- Add RenderToLayer component (#2042) (thanks @chrismcv)
+- Open state of of dialog now controlled through props (#1996)
+  - openImmediately, show(), dismiss() deprecated
+- Update TextField docs (#2070)
+- New Badge component (#2045) (thanks @rhythnic)
+- Add import statements to components' docs pages (#2113)
+
+##### Component Fixes / Enhancements
+- Fix server side rendering (#2021)
+- Add key to TableHeaderColumn for selectAll (#2030)
+- Fix Circular Progress transition (#2047)
+- Fix Snackbar getting stuck when receiving new props (#2024)
+- iPad enhanced textarea fix (#1720)
+- Table clickAway triggers onRowSelection (#2054)
+- Theme color fixes for Slider and Toggle (#2016)
+
+## 0.13.1
+###### _Oct 29, 2015_
+
+##### General
+- [SVGIcons] added index.js and index-generator script (#1959)
+- [TimePicker] openDialog() function (#1939) and autoOk prop (#1940) added
+- [DatePicker] i18n support added (#1658)
+- [LeftNav] supports nested children (w/o menuItems) (#1982)
+- [Snackbar] updated for new specification (#1668)
+- [Tabs] added tabTemplate prop (#1691)
+
+##### Component Fixes / Enhancements
+- [TextArea] height issue fixed (#1875)
+- [GridList] doc added (#1948) with code examples (#1988)
+- [TextField] fixed custom theme color hiding backgroundColor (#1989)
+- [TimePicker] added style and textFieldStyle props (#1949)
+- [Card] text color is now pulled from theme (#1995)
+
+## 0.13.0
+###### _Oct 21, 2015_
+
+##### Breaking Changes
+- Material-UI for React 0.14.x
+
+##### Component Fixes / Enhancements
+- FloatingActionButton now has iconStyle prop (#1575)
+- Card title and subtitle props can be any node (#1950)
+
 ## 0.12.5
 ###### _Oct 21, 2015_
 
@@ -10,6 +462,8 @@ v0.12.4 should have really been v0.13.0 as it breaks compatibility with React 0.
 
 ## 0.12.4
 ###### _Oct 19, 2015_
+
+**This version is not compatible with React 0.13.x.** If you're on React 0.13.x, use Material-UI v0.12.5 instead.
 
 ##### General
 - React 0.14 compatible
@@ -50,7 +504,7 @@ v0.12.4 should have really been v0.13.0 as it breaks compatibility with React 0.
   - Fix theme display switch problem in doc (#1696)
   - Fix typo in src/card-expandable.jsx (#1724)
   - Fix broken link to v0.12.0 release tag
-- Use correct require calls 
+- Use correct require calls
   - for react addons (#1729)
   - for raw themes (#1742)
 - Remove hard-coded color values from theme-manager

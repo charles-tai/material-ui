@@ -1,15 +1,15 @@
-const React = require('react/addons');
-const createFragment = React.addons.createFragment;
+import React from 'react';
+import createFragment from 'react-addons-create-fragment';
 
-module.exports = {
+export default {
 
   create(fragments) {
-    let newFragments = {};
+    const newFragments = {};
     let validChildrenCount = 0;
     let firstKey;
 
     //Only create non-empty key fragments
-    for (let key in fragments) {
+    for (const key in fragments) {
       const currentChild = fragments[key];
 
       if (currentChild) {
@@ -25,14 +25,12 @@ module.exports = {
   },
 
   extend(children, extendedProps, extendedChildren) {
-
     return React.isValidElement(children) ?
       React.Children.map(children, (child) => {
-
-        const newProps = typeof(extendedProps) === 'function' ?
+        const newProps = typeof (extendedProps) === 'function' ?
           extendedProps(child) : extendedProps;
 
-        const newChildren = typeof(extendedChildren) === 'function' ?
+        const newChildren = typeof (extendedChildren) === 'function' ?
           extendedChildren(child) : extendedChildren ?
           extendedChildren : child.props.children;
 

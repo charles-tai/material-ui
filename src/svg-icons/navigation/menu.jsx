@@ -1,19 +1,13 @@
-const React = require('react/addons');
-const PureRenderMixin = React.addons.PureRenderMixin;
-const SvgIcon = require('../../svg-icon');
+import React from 'react';
+import pure from 'recompose/pure';
+import SvgIcon from '../../svg-icon';
 
-const NavigationMenu = React.createClass({
+let NavigationMenu = (props) => (
+  <SvgIcon {...props}>
+    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+  </SvgIcon>
+);
+NavigationMenu = pure(NavigationMenu)
+NavigationMenu.displayName = 'NavigationMenu';
 
-  mixins: [PureRenderMixin],
-
-  render() {
-    return (
-      <SvgIcon {...this.props}>
-        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
-      </SvgIcon>
-    );
-  }
-
-});
-
-module.exports = NavigationMenu;
+export default NavigationMenu;

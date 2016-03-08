@@ -1,44 +1,57 @@
-const React = require('react');
-const TableRowColumn = require('./table-row-column');
-const StylePropable = require('../mixins/style-propable');
-const DefaultRawTheme = require('../styles/raw-themes/light-raw-theme');
-const ThemeManager = require('../styles/theme-manager');
+import React from 'react';
+import TableRowColumn from './table-row-column';
+import getMuiTheme from '../styles/getMuiTheme';
+
+function getStyles(props, state) {
+  const {
+    tableFooter,
+  } = state.muiTheme;
+
+  return {
+    cell: {
+      borderTop: `1px solid ${tableFooter.borderColor}`,
+      verticalAlign: 'bottom',
+      padding: 20,
+      textAlign: 'left',
+      whiteSpace: 'nowrap',
+    },
+  };
+}
 
 const TableFooter = React.createClass({
 
-  mixins: [StylePropable],
+  propTypes: {
+    /**
+     * Controls whether or not header rows should be adjusted
+     * for a checkbox column. If the select all checkbox is true,
+     * this property will not influence the number of columns.
+     * This is mainly useful for "super header" rows so that
+     * the checkbox column does not create an offset that needs
+     * to be accounted for manually.
+     */
+    adjustForCheckbox: React.PropTypes.bool,
+    /**
+     * Children passed to table footer.
+     */
+    children: React.PropTypes.node,
+
+    /**
+     * The css class name of the root element.
+     */
+    className: React.PropTypes.string,
+
+    /**
+     * Override the inline-styles of the root element.
+     */
+    style: React.PropTypes.object,
+  },
 
   contextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  propTypes: {
-    adjustForCheckbox: React.PropTypes.bool,
-    style: React.PropTypes.object,
-  },
-
-  //for passing default theme context to children
   childContextTypes: {
     muiTheme: React.PropTypes.object,
-  },
-
-  getChildContext () {
-    return {
-      muiTheme: this.state.muiTheme,
-    };
-  },
-
-  getInitialState () {
-    return {
-      muiTheme: this.context.muiTheme ? this.context.muiTheme : ThemeManager.getMuiTheme(DefaultRawTheme),
-    };
-  },
-
-  //to update theme inside state whenever a new theme is passed down
-  //from the parent / owner using context
-  componentWillReceiveProps (nextProps, nextContext) {
-    let newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-    this.setState({muiTheme: newMuiTheme});
   },
 
   getDefaultProps() {
@@ -48,76 +61,65 @@ const TableFooter = React.createClass({
     };
   },
 
-  getTheme() {
-    return this.state.muiTheme.tableFooter;
+  getInitialState() {
+    return {
+      muiTheme: this.context.muiTheme || getMuiTheme(),
+    };
   },
 
-  getStyles() {
-   const styles = {
-      cell: {
-        borderTop: '1px solid ' + this.getTheme().borderColor,
-        verticalAlign: 'bottom',
-        padding: 20,
-        textAlign: 'left',
-        whiteSpace: 'nowrap',
-      },
+  getChildContext() {
+    return {
+      muiTheme: this.state.muiTheme,
     };
+  },
 
-    return styles;
+  componentWillReceiveProps(nextProps, nextContext) {
+    this.setState({
+      muiTheme: nextContext.muiTheme || this.state.muiTheme,
+    });
   },
 
   render() {
-    let {
+    const {
+      adjustForCheckbox,
+      children,
       className,
       style,
       ...other,
     } = this.props;
-    let classes = 'mui-table-footer';
-    if (className) classes += ' ' + className;
 
-    let footerRows = this._createRows();
+    const {
+      prepareStyles,
+    } = this.state.muiTheme;
+
+    const styles = getStyles(this.props, this.state);
+
+    const footerRows = React.Children.map(children, (child, rowNumber) => {
+      const newChildProps = {
+        displayBorder: false,
+        key: `f-${rowNumber}`,
+        rowNumber: rowNumber,
+        style: Object.assign({}, styles.cell, child.props.style),
+      };
+
+      let newDescendants;
+      if (adjustForCheckbox) {
+        newDescendants = [
+          <TableRowColumn key={`fpcb${rowNumber}`} style={{width: 24}} />,
+          ...React.Children.toArray(child.props.children),
+        ];
+      }
+
+      return React.cloneElement(child, newChildProps, newDescendants);
+    });
 
     return (
-      <tfoot className={classes} style={this.prepareStyles(style)} {...other}>
+      <tfoot className={className} style={prepareStyles(Object.assign({}, style))} {...other}>
         {footerRows}
       </tfoot>
     );
   },
 
-  _createRows() {
-    let rowNumber = 0;
-    return (
-      React.Children.map(this.props.children, (child) => {
-        return this._createRow(child, rowNumber++);
-      })
-    );
-  },
-
-  _createRow(child, rowNumber) {
-    let styles = this.getStyles();
-    let props = {
-      className: 'mui-table-footer-row',
-      displayBorder: false,
-      key: 'f-' + rowNumber,
-      rowNumber: rowNumber,
-      style: this.mergeAndPrefix(styles.cell, child.props.style),
-    };
-
-    let children = [this._getCheckboxPlaceholder(props)];
-    React.Children.forEach(child.props.children, (child) => {
-      children.push(child);
-    });
-
-    return React.cloneElement(child, props, children);
-  },
-
-  _getCheckboxPlaceholder(props) {
-    if (!this.props.adjustForCheckbox) return null;
-
-    let key = 'fpcb' + props.rowNumber;
-    return <TableRowColumn key={key} style={{width: 24}} />;
-  },
-
 });
 
-module.exports = TableFooter;
+export default TableFooter;

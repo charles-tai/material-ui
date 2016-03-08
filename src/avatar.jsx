@@ -1,115 +1,164 @@
-const React = require('react/addons');
-const StylePropable = require('./mixins/style-propable');
-const Colors = require('./styles/colors');
-const DefaultRawTheme = require('./styles/raw-themes/light-raw-theme');
-const ThemeManager = require('./styles/theme-manager');
+import React from 'react';
+import getMuiTheme from './styles/getMuiTheme';
+
+function getStyles(props, state) {
+  const {
+    backgroundColor,
+    color,
+    size,
+    src,
+  } = props;
+
+  const {
+    avatar,
+  } = state.muiTheme;
+
+  const styles = {
+    root: {
+      color: color || avatar.color,
+      backgroundColor: backgroundColor || avatar.backgroundColor,
+      userSelect: 'none',
+      display: 'inline-block',
+      textAlign: 'center',
+      lineHeight: `${size}px`,
+      fontSize: size / 2 + 4,
+      borderRadius: '50%',
+      height: size,
+      width: size,
+    },
+    icon: {
+      color: color || avatar.color,
+      margin: 8,
+    },
+  };
+
+  if (src && avatar.borderColor) {
+    Object.assign(styles.root, {
+      border: `solid 1px ${avatar.borderColor}`,
+      height: size - 2,
+      width: size - 2,
+    });
+  }
+
+  return styles;
+}
 
 const Avatar = React.createClass({
 
-  mixins: [StylePropable],
+  propTypes: {
+    /**
+     * The backgroundColor of the avatar. Does not apply to image avatars.
+     */
+    backgroundColor: React.PropTypes.string,
+
+    /**
+     * Can be used, for instance, to render a letter inside the avatar.
+     */
+    children: React.PropTypes.node,
+
+    /**
+     * The css class name of the root `div` or `img` element.
+     */
+    className: React.PropTypes.string,
+
+    /**
+     * The icon or letter's color.
+     */
+    color: React.PropTypes.string,
+
+    /**
+     * This is the SvgIcon or FontIcon to be used inside the avatar.
+     */
+    icon: React.PropTypes.element,
+
+    /**
+     * This is the size of the avatar in pixels.
+     */
+    size: React.PropTypes.number,
+
+    /**
+     * If passed in, this component will render an img element. Otherwise, a div will be rendered.
+     */
+    src: React.PropTypes.string,
+
+    /**
+     * Override the inline-styles of the root element.
+     */
+    style: React.PropTypes.object,
+  },
 
   contextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  //for passing default theme context to children
   childContextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  getChildContext () {
+  getDefaultProps() {
+    return {
+      size: 40,
+    };
+  },
+
+  getInitialState() {
+    return {
+      muiTheme: this.context.muiTheme || getMuiTheme(),
+    };
+  },
+
+  getChildContext() {
     return {
       muiTheme: this.state.muiTheme,
     };
   },
 
-  propTypes: {
-    backgroundColor: React.PropTypes.string,
-    color: React.PropTypes.string,
-    icon: React.PropTypes.element,
-    size: React.PropTypes.number,
-    src: React.PropTypes.string,
-    style: React.PropTypes.object,
-  },
-
-  getInitialState () {
-    return {
-      muiTheme: this.context.muiTheme ? this.context.muiTheme : ThemeManager.getMuiTheme(DefaultRawTheme),
-    };
-  },
-
-  //to update theme inside state whenever a new theme is passed down
-  //from the parent / owner using context
-  componentWillReceiveProps (nextProps, nextContext) {
-    let newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-    this.setState({muiTheme: newMuiTheme});
-  },
-
-  getDefaultProps() {
-    return {
-      backgroundColor: Colors.grey400,
-      color: Colors.white,
-      size: 40,
-    };
+  componentWillReceiveProps(nextProps, nextContext) {
+    this.setState({
+      muiTheme: nextContext.muiTheme || this.state.muiTheme,
+    });
   },
 
   render() {
-    let {
-      backgroundColor,
-      color,
+    const {
       icon,
-      size,
       src,
       style,
+      className,
       ...other,
     } = this.props;
 
-    let styles = {
-      root: {
-        height: size,
-        width: size,
-        userSelect: 'none',
-        borderRadius: '50%',
-        display: 'inline-block',
-      },
-    };
+    const {
+      prepareStyles,
+    } = this.state.muiTheme;
+
+    const styles = getStyles(this.props, this.state);
 
     if (src) {
-      const borderColor = this.state.muiTheme.avatar.borderColor;
-
-      if(borderColor) {
-        styles.root = this.mergeStyles(styles.root, {
-          height: size - 2,
-          width: size - 2,
-          border: 'solid 1px ' + borderColor,
-        });
-      }
-
-      return <img {...other} src={src} style={this.prepareStyles(styles.root, style)} />;
+      return (
+        <img
+          {...other}
+          src={src}
+          style={prepareStyles(Object.assign(styles.root, style))}
+          className={className}
+        />
+      );
     } else {
-      styles.root = this.mergeStyles(styles.root, {
-        backgroundColor: backgroundColor,
-        textAlign: 'center',
-        lineHeight: size + 'px',
-        fontSize: size / 2 + 4,
-        color: color,
-      });
-
-      const styleIcon = {
-        margin: 8,
-      };
-
-      const iconElement = icon ? React.cloneElement(icon, {
-        color: color,
-        style: this.mergeStyles(styleIcon, icon.props.style),
-      }) : null;
-
-      return <div {...other} style={this.prepareStyles(styles.root, style)}>
-        {iconElement}
-        {this.props.children}
-      </div>;
+      return (
+        <div
+          {...other}
+          style={prepareStyles(Object.assign(styles.root, style))}
+          className={className}
+        >
+          {icon && React.cloneElement(icon, {
+            color: styles.icon.color,
+            style: Object.assign(styles.icon, icon.props.style),
+          })}
+          {this.props.children}
+        </div>
+      );
     }
   },
 });
 
-module.exports = Avatar;
+export default Avatar;

@@ -1,101 +1,138 @@
-const React = require('react');
-const StylePropable = require('./mixins/style-propable');
-const Transitions = require('./styles/transitions');
-const DefaultRawTheme = require('./styles/raw-themes/light-raw-theme');
-const ThemeManager = require('./styles/theme-manager');
+import React from 'react';
+import Transitions from './styles/transitions';
+import getMuiTheme from './styles/getMuiTheme';
+
+function getStyles(props, state) {
+  const {
+    color,
+    hoverColor,
+  } = props;
+
+  const {
+    baseTheme,
+  } = state.muiTheme;
+
+  const offColor = color || baseTheme.palette.textColor;
+  const onColor = hoverColor || offColor;
+
+  return {
+    root: {
+      color: state.hovered ? onColor : offColor,
+      position: 'relative',
+      fontSize: baseTheme.spacing.iconSize,
+      display: 'inline-block',
+      userSelect: 'none',
+      transition: Transitions.easeOut(),
+    },
+  };
+}
+
 
 const FontIcon = React.createClass({
 
-  mixins: [StylePropable],
+  propTypes: {
+    /**
+     * This is the font color of the font icon. If not specified,
+     * this component will default to muiTheme.palette.textColor.
+     */
+    color: React.PropTypes.string,
+
+    /**
+     * This is the icon color when the mouse hovers over the icon.
+     */
+    hoverColor: React.PropTypes.string,
+
+    /**
+     * Function called when mouse enters this element.
+     */
+    onMouseEnter: React.PropTypes.func,
+
+    /**
+     * Function called when mouse leaves this element.
+     */
+    onMouseLeave: React.PropTypes.func,
+
+    /**
+     * Override the inline-styles of the root element.
+     */
+    style: React.PropTypes.object,
+  },
 
   contextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  //for passing default theme context to children
   childContextTypes: {
     muiTheme: React.PropTypes.object,
   },
 
-  getChildContext () {
+  getDefaultProps() {
     return {
-      muiTheme: this.state.muiTheme,
+      onMouseEnter: () => {},
+      onMouseLeave: () => {},
     };
-  },
-
-  propTypes: {
-    color: React.PropTypes.string,
-    hoverColor: React.PropTypes.string,
-    onMouseLeave: React.PropTypes.func,
-    onMouseEnter: React.PropTypes.func,
   },
 
   getInitialState() {
     return {
       hovered: false,
-      muiTheme: this.context.muiTheme ? this.context.muiTheme : ThemeManager.getMuiTheme(DefaultRawTheme),
+      muiTheme: this.context.muiTheme || getMuiTheme(),
     };
   },
 
-  //to update theme inside state whenever a new theme is passed down
-  //from the parent / owner using context
-  componentWillReceiveProps (nextProps, nextContext) {
-    let newMuiTheme = nextContext.muiTheme ? nextContext.muiTheme : this.state.muiTheme;
-    this.setState({muiTheme: newMuiTheme});
+  getChildContext() {
+    return {
+      muiTheme: this.state.muiTheme,
+    };
+  },
+
+  componentWillReceiveProps(nextProps, nextContext) {
+    this.setState({
+      muiTheme: nextContext.muiTheme || this.state.muiTheme,
+    });
+  },
+
+  _handleMouseLeave(event) {
+    // hover is needed only when a hoverColor is defined
+    if (this.props.hoverColor !== undefined)
+      this.setState({hovered: false});
+    if (this.props.onMouseLeave) {
+      this.props.onMouseLeave(event);
+    }
+  },
+
+  _handleMouseEnter(event) {
+    // hover is needed only when a hoverColor is defined
+    if (this.props.hoverColor !== undefined)
+      this.setState({hovered: true});
+    if (this.props.onMouseEnter) {
+      this.props.onMouseEnter(event);
+    }
   },
 
   render() {
-    let {
-      color,
-      hoverColor,
+    const {
       onMouseLeave,
       onMouseEnter,
       style,
       ...other,
     } = this.props;
 
-    let spacing = this.state.muiTheme.rawTheme.spacing;
-    let offColor = color ? color :
-      style && style.color ? style.color :
-      this.state.muiTheme.rawTheme.palette.textColor;
-    let onColor = hoverColor ? hoverColor : offColor;
+    const {
+      prepareStyles,
+    } = this.state.muiTheme;
 
-    let mergedStyles = this.prepareStyles({
-      position: 'relative',
-      fontSize: spacing.iconSize,
-      display: 'inline-block',
-      userSelect: 'none',
-      transition: Transitions.easeOut(),
-    }, style, {
-      color: this.state.hovered ? onColor : offColor,
-    });
+    const styles = getStyles(this.props, this.state);
 
     return (
       <span
         {...other}
         onMouseLeave={this._handleMouseLeave}
         onMouseEnter={this._handleMouseEnter}
-        style={mergedStyles} />
+        style={prepareStyles(Object.assign(styles.root, style))}
+      />
     );
-  },
-
-  _handleMouseLeave(e) {
-    // hover is needed only when a hoverColor is defined
-    if (this.props.hoverColor !== undefined)
-      this.setState({hovered: false});
-    if (this.props.onMouseLeave) {
-      this.props.onMouseLeave(e);
-    }
-  },
-
-  _handleMouseEnter(e) {
-    // hover is needed only when a hoverColor is defined
-    if (this.props.hoverColor !== undefined)
-      this.setState({hovered: true});
-    if (this.props.onMouseEnter) {
-      this.props.onMouseEnter(e);
-    }
   },
 });
 
-module.exports = FontIcon;
+export default FontIcon;
