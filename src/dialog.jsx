@@ -15,6 +15,7 @@ const TransitionItem = React.createClass({
   propTypes: {
     children: React.PropTypes.node,
     style: React.PropTypes.object,
+    enableFullScreen: React.PropTypes.bool,
   },
 
   contextTypes: {
@@ -241,8 +242,11 @@ const DialogInline = React.createClass({
     const minPaddingTop = 16;
 
     //Reset the height in case the window was resized.
-    dialogWindow.style.height = '';
-    dialogContent.style.height = '';
+    // Do not reset if enableFullScreen is true
+    if (!this.props.enableFullScreen) {
+      dialogWindow.style.height = '';
+      dialogContent.style.height = '';
+    }
 
     const dialogWindowHeight = dialogWindow.offsetHeight;
     let paddingTop = ((clientHeight - dialogWindowHeight) / 2) - 64;
@@ -267,6 +271,12 @@ const DialogInline = React.createClass({
       }
 
       dialogContent.style.maxHeight = `${maxDialogContentHeight}px`;
+    }
+
+    if (this.props.enableFullScreen) {
+      container.style.paddingTop = '0px';
+      dialogContent.style.height = clientHeight;
+      dialogContent.style.maxHeight = clientHeight;
     }
   },
 

@@ -166,6 +166,11 @@ const TimePicker = React.createClass({
     this.refs.dialogWindow.show();
   },
 
+  /* Added for material-ui-loki */
+  clearTime() {
+    this.refs.input.clearValue();
+  },
+
   _handleDialogAccept(t) {
     this.setState({
       time: t,
