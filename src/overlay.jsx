@@ -110,6 +110,7 @@ const Overlay = React.createClass({
   _preventScrolling() {
     const body = document.getElementsByTagName('body')[0];
     this._originalBodyOverflow = body.style.overflow;
+
     body.style.overflow = 'hidden';
   },
 

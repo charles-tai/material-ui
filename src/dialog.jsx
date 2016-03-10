@@ -269,10 +269,9 @@ const DialogInline = React.createClass({
       if (React.Children.count(actions)) {
         maxDialogContentHeight -= dialogContent.nextSibling.offsetHeight;
       }
-
       dialogContent.style.maxHeight = `${maxDialogContentHeight}px`;
     }
-
+ 
     if (this.props.enableFullScreen) {
       container.style.paddingTop = '0px';
       dialogContent.style.height = clientHeight;

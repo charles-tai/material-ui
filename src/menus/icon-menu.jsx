@@ -340,6 +340,7 @@ const IconMenu = React.createClass({
       </div>
     );
   },
+
 });
 
 export default IconMenu;

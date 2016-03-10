@@ -129,7 +129,6 @@ const TimePicker = React.createClass({
     this.setState(newState);
   },
 
-
   /**
    * Deprecated.
    * returns timepicker value.
@@ -152,6 +151,11 @@ const TimePicker = React.createClass({
     this.setState({time: time ? time : emptyTime});
   },
 
+  /* Added for material-ui-loki */
+  clearTime() {
+    this.refs.input.clearValue();
+  },
+
   /**
    * Alias for `openDialog()` for an api consistent with TextField.
    */
@@ -164,11 +168,6 @@ const TimePicker = React.createClass({
       dialogTime: this.state.time,
     });
     this.refs.dialogWindow.show();
-  },
-
-  /* Added for material-ui-loki */
-  clearTime() {
-    this.refs.input.clearValue();
   },
 
   _handleDialogAccept(t) {
