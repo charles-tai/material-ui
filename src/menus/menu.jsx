@@ -422,7 +422,7 @@ const Menu = React.createClass({
       let scrollTop = selectedOffSet - menuItemHeight;
       if (scrollTop < menuItemHeight) scrollTop = 0;
 
-      React.findDOMNode(this.refs.scrollContainer).scrollTop = scrollTop;
+      ReactDOM.findDOMNode(this.refs.scrollContainer).scrollTop = scrollTop;
     }
   },
 
