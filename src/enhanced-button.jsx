@@ -297,7 +297,7 @@ const EnhancedButton = React.createClass({
       display: 'inline-block',
       font: 'inherit',
       fontFamily: this.state.muiTheme.rawTheme.fontFamily,
-      WebkitTapHighlightColor: enhancedButton.tapHighlightColor || '#f00', // Remove mobile color flashing (deprecated)
+      WebkitTapHighlightColor: enhancedButton.tapHighlightColor, // Remove mobile color flashing (deprecated)
       cursor: disabled ? 'default' : 'pointer',
       textDecoration: 'none',
       outline: 'none',
