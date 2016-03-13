@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import keycode from 'keycode';
+import shallowEqual from '../utils/shallow-equal';
 import ColorManipulator from '../utils/color-manipulator';
 import Transitions from '../styles/transitions';
 import deprecated from '../utils/deprecatedPropType';
@@ -356,12 +357,24 @@ const TextField = React.createClass({
     if (newState) this.setState(newState);
   },
 
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return (
+      !shallowEqual(this.props, nextProps) ||
+      !shallowEqual(this.state, nextState) ||
+      !shallowEqual(this.context, nextContext)
+    );
+  },
+
   blur() {
     if (this.input) this._getInputNode().blur();
   },
 
   focus() {
     if (this.input) this._getInputNode().focus();
+  },
+
+  select() {
+    if (this.input) this._getInputNode().select();
   },
 
   getValue() {
