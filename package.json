@@ -11,6 +11,7 @@
     "lint": "eslint --ext .jsx,.js src docs/src test/browser test/unit && echo \"eslint: no lint errors\"",
     "prebuild": "rimraf lib",
     "prepublish": "in-publish && npm run build || not-in-publish",
+    "postinstall": "npm run build",
     "test": "npm run test:unit && npm run test:browser && npm run test:unit:coverage && npm run coverage:combine",
     "test:browser": "npm run test:browser:base -- --single-run",
     "test:browser:watch": "npm run test:browser:base -- --auto-watch",
