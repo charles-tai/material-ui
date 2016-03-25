@@ -235,8 +235,8 @@ const AppBar = React.createClass({
         zDepth={zDepth}>
           {menuElementLeft}
           {titleElement}
-          {menuElementRight}
           {children}
+          {menuElementRight}
       </Paper>
     );
   },
