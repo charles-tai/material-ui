@@ -7,6 +7,7 @@ import TouchRipple from './ripples/touch-ripple';
 import Paper from './paper';
 import getMuiTheme from './styles/getMuiTheme';
 import warning from 'warning';
+import ClearFix from './clearfix';
 
 function getStyles(props, state) {
   const {
